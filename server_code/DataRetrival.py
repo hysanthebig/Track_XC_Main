@@ -53,23 +53,26 @@ def get_records(row,sport):
   data = res.json()
 
   records = []
-  meet_dict = data.get("meets",[])
   event_dict = {}
+  meet_dict = data.get("meets",[])
+  school_dict = data.get("allTeams",[])
+  grade_dict = data.get("grades",[])
 
   if sport == "track":
     for r in data.get("eventsTF",[]):
       event_dict[r["IDEvent"]] = r["Event"]
       
     for r in data.get("resultsTF", []):
+      
       records.append({
-        "School": r["SchoolID"],
+        "School":school_dict[str(r["SchoolID"])]["SchoolName"],
         "Runner": student,
         "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
         "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),        
         "Time": r["Result"].replace("a", ""),
         "Length": event_dict[r["EventID"]],
         "Year":r["SeasonID"],
-          
+        "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
         "Gender":row["Gender"]
       })
   else:
@@ -78,13 +81,14 @@ def get_records(row,sport):
       
     for r in data.get("resultsXC", []):
       records.append({
-        "School": r["SchoolID"],
+        "School": school_dict[str(r["SchoolID"])]["SchoolName"],
         "Runner": student,
-        "Meet": meet_dict[r["MeetID"]]["MeetName"],
-        "Date" : meet_dict[r["MeetID"]]["EndDate"].replace("T00:00:00", ""),
+        "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
+        "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
         "Time": r["Result"],
         "Length": event_dict[r["Distance"]],
         "Year":r["SeasonID"],
+        "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
         "Gender":row["Gender"]
       })
       

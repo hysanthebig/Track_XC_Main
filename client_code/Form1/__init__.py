@@ -17,4 +17,4 @@ class Form1(Form1Template):
   if 1 == 0:
     anvil.server.call("retrieve_id","1619","2026","track")
   if 1 == 1:
-    anvil.server.call('start_import',"track")
+    anvil.server.call('start_import',"xc")
