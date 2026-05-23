@@ -28,25 +28,18 @@ def retrieve_data_from_tables(table):
 
 
 @anvil.server.callable
-def refresh_pr(xc_year,track_year):
+def refresh_pr():
   list_table = ["xc_table","track_table"]
-
-  pr_df = None
+  all_df=[]
   for table in list_table:
-    
-    if table == "xc_table":
-      year = xc_year
-    else:
-      year = track_year
-      
     df = retrieve_data_from_tables(table)
-    
-    for length in df["Length"].unique().tolist():
-      dfs = filter_df(df,lengthlist = [length],yearlist = [year])
-      mti = dfs.groupby("Runner")["time_seconds"].min().copy()
-      dfs = dfs[dfs["time_seconds"] == dfs["Runner"].map(mti)]
-      dfs.sort_values(by = "time_seconds")
-      pr_df = pd.concat([dfs,pr_df], ignore_index = True)
+    for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
+      dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
+      print(dfs)
+      dfs["Team Position"] = dfs.index + 1
+      all_df.append(dfs)
+      
+  pr_df = pd.concat(all_df, ignore_index = True)
 
   if not pr_df.isna().any().any():
     app_tables.pr_table.delete_all_rows()

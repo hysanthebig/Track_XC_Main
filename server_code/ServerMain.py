@@ -55,4 +55,3 @@ def filter_df(df,runnerlist = None,schoollist = None,lengthlist= None,gender = N
   return(df_filtered)
 
 
-
