@@ -10,12 +10,32 @@ import pandas as pd
 MAX_WORKERS = 10
 BATCH_SIZE = 500
 
-distances_list = ["800 Meters","1600 Meters","3200 Meters"]
+field_events_list = [
+  'Shot Put', 'Discus', 'High Jump',
+  'Pole Vault', 'Long Jump', 'Triple Jump'
+]
 
 
 # -------------------------
 # HELPERS
 # -------------------------
+def field_event(length):
+  if "m" in length:
+    return length
+  elif "'" in length:
+    try:
+      feet, inches = length.split("'")
+      total_inches = float(feet) * 12 + float(inches.replace('"', ""))
+      meters = round(total_inches * 0.0254, 2)
+      return f"{meters}m"
+    except:
+      print(length)
+  elif "-" in length:
+    feet, inches = length.split("-")
+    total_inches = float(feet) * 12 + float(inches)
+    meters = round(total_inches * 0.0254, 2)
+    return f"{meters}m"
+  return length
 
 
 def time_to_seconds(time_str):
@@ -33,68 +53,53 @@ def time_to_seconds(time_str):
 # -------------------------
 # FETCH FUNCTION
 # -------------------------
-def get_records(row,sport):
-  student_id = row["StudentID"]
-  student = row["Runner"]
+def get_records(row,sport,team_id,year):
+  
   if sport == "track":
-    sport_id = "tf"
+    url = f"https://www.athletic.net/api/v1/TeamHome/GetTeamEventRecords?teamId={team_id}&seasonId={year}"
   else:
-    sport_id = "xc"
-
-  url = f"https://www.athletic.net/api/v1/AthleteBio/GetAthleteBioData?athleteId={student_id}&sport={sport_id}&level=0"
+    url = f"https://www.athletic.net/api/v1/TeamHome/GetSeasonBest?teamId={team_id}&seasonId={year}"
 
   res = requests.get(url, impersonate="chrome110")
 
   if res.status_code != 200:
     print("Error")
-    print(res.status_code)
-    print(url)
     return []
 
   data = res.json()
 
   records = []
-  event_dict = {}
-  meet_dict = data.get("meets",[])
-  school_dict = data.get("allTeams",[])
-  grade_dict = data.get("grades",[])
-
   if sport == "track":
-    for r in data.get("eventsTF",[]):
-      event_dict[r["IDEvent"]] = r["Event"]
-      
-    for r in data.get("resultsTF", []):
-
-      event = event_dict[r["EventID"]]
-      if event in distances_list:
+    for r in data.get("eventRecords", []):
+      if r["Event"] in ["800 Meters","1600 Meters","3200 Meters"]:
+        name = f"{r['FirstName']} {r['LastName']}"
+        gender = "Female" if r["Gender"] == "F" else "Male"
+  
         records.append({
-          "School":school_dict[str(r["SchoolID"])]["SchoolName"],
-          "Runner": student,
-          "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-          "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),        
+          "School": school,
+          "Runner": name,
+          "Gender": gender,
+          "Grade": r["GradeID"],
+          "Race": r["MeetName"],
           "Time": r["Result"].replace("a", ""),
-          "Length": event,
-          "Year":r["SeasonID"],
-          "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-          "Gender":row["Gender"]
+          "Length": r["Event"],
+          "Date": r["EndDate"].replace("T00:00:00", ""),
         })
   else:
-    for r in data.get("distancesXC",[]):
-      event_dict[r["Meters"]] = r["Distance"]
-      
-    for r in data.get("resultsXC", []):
+    for r in data.get("results", []):
+      name = f"{r['FirstName']} {r['LastName']}"
+      gender = "Female" if r["GenderID"] == "F" else "Male"
+
       records.append({
-        "School": school_dict[str(r["SchoolID"])]["SchoolName"],
-        "Runner": student,
-        "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-        "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
-        "Time": r["Result"],
-        "Length": event_dict[r["Distance"]],
-        "Year":r["SeasonID"],
-        "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-        "Gender":row["Gender"]
-      })
-      
+          "School": school,
+          "Runner": name,
+          "Gender": gender,
+          "Grade": r["ShortDesc"],
+          "Race": r["MeetName"],
+          "Time": r["Result"].replace("a", ""),
+          "Length": str(r["Distance"]),
+          "Date": r["MeetDate"].replace("T00:00:00", ""),
+        })
   print(records)
   return records
 
@@ -103,11 +108,9 @@ def get_records(row,sport):
 # MAIN PIPELINE
 # -------------------------
 @anvil.server.background_task
-def import_all_records(sport):
-  if sport == "track":
-    rows = list(app_tables.track_id_table.search())
-  else:
-    rows = list(app_tables.xc_id_table.search())
+def import_all_recordsa(sport):
+
+  rows = list(app_tables.school_ids.search())
 
   all_records = []
 
@@ -128,8 +131,8 @@ def import_all_records(sport):
   for r in all_records:
     r["time_seconds"] = time_to_seconds(r["Time"])
 
-
-
+    if r["Length"] in field_events_list:
+      r["Time"] = field_event(r["Time"])
 
     # -------------------------
     # 3. BATCH INSERT INTO ANVIL
@@ -157,5 +160,5 @@ def import_all_records(sport):
 # CALLABLE START FUNCTION
 # -------------------------
 @anvil.server.callable
-def start_import(sport):
-  anvil.server.launch_background_task("import_all_records",sport)
+def pr_retrival(sport):
+  anvil.server.launch_background_task("import_all_recordsa",sport)

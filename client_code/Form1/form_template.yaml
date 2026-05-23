@@ -1,2 +1,33 @@
+components_by_slot:
+  app_bar_links:
+  - event_bindings: {}
+    layout_properties: {}
+    name: icon_button_1
+    properties: {icon: 'mi:sync', visible: false}
+    type: form:dep_lin1x4oec0ytd:_Components.IconButton
+  content:
+  - layout_properties: {}
+    name: flow_panel_1
+    properties: {}
+    type: FlowPanel
+  - components:
+    - name: repeating_panel_1
+      properties: {item_template: Form1.RowTemplate1}
+      type: RepeatingPanel
+    layout_properties: {}
+    name: data_grid_1
+    properties: {}
+    type: DataGrid
+  navigation:
+  - components:
+    - event_bindings: {}
+      layout_properties: {grid_position: 'OTYLKW,JTJGWD'}
+      name: refresh_button
+      properties: {icon: 'mi:sync'}
+      type: form:dep_lin1x4oec0ytd:_Components.IconButton
+    layout_properties: {}
+    name: column_panel_1
+    properties: {}
+    type: ColumnPanel
 is_package: true
 layout: {type: 'form:dep_lin1x4oec0ytd:Layouts.NavigationDrawerLayout'}
