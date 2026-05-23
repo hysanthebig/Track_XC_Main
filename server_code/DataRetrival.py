@@ -66,7 +66,7 @@ def get_records(row,sport):
     for r in data.get("resultsTF", []):
 
       event = event_dict[r["EventID"]]
-      if event in distances_list:
+      if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ"]:
         records.append({
           "School":school_dict[str(r["SchoolID"])]["SchoolName"],
           "Runner": student,
@@ -76,7 +76,8 @@ def get_records(row,sport):
           "Length": event,
           "Year":r["SeasonID"],
           "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-          "Gender":row["Gender"]
+          "Gender":row["Gender"],
+          "Sport":"Track"
         })
   else:
     for r in data.get("distancesXC",[]):
@@ -89,10 +90,11 @@ def get_records(row,sport):
         "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
         "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
         "Time": r["Result"],
-        "Length": event_dict[r["Distance"]],
+        "Length": str(event_dict[r["Distance"]]),
         "Year":r["SeasonID"],
         "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-        "Gender":row["Gender"]
+        "Gender":row["Gender"],
+        "Sport":"XC"
       })
       
   print(records)

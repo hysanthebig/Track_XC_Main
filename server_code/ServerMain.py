@@ -25,7 +25,7 @@ def get_table(sport):
     data = app_tables.xc_table.search()
   return data
 
-def filter(df,runnerlist = None,schoollist = None,lengthlist= None,gender = None,gradelist =None, meetlist = None, yearlist = None):
+def filter_df(df,runnerlist = None,schoollist = None,lengthlist= None,gender = None,gradelist =None, meetlist = None, yearlist = None):
   ####################Filter#######################
   readmask = pd.Series(True,index = df.index)
 
@@ -52,7 +52,7 @@ def filter(df,runnerlist = None,schoollist = None,lengthlist= None,gender = None
 
   df_filtered = df.loc[readmask]
 
-  print(f"filter {end-start:.4f}")
-
   return(df_filtered)
-  
+
+
+

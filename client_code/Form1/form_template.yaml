@@ -6,18 +6,27 @@ components_by_slot:
     properties: {icon: 'mi:sync', visible: false}
     type: form:dep_lin1x4oec0ytd:_Components.IconButton
   content:
-  - layout_properties: {}
+  - components:
+    - components:
+      - name: repeating_panel_1
+        properties: {item_template: Form1.RowTemplate2}
+        type: RepeatingPanel
+      layout_properties: {width: 1069.0414199218749}
+      name: data_grid_1
+      properties:
+        columns:
+        - {data_key: Rank, id: ITHVDS, title: Rank}
+        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Time, id: OMVYVW, title: Time}
+        - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: 80.111083984375}
+        - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 235.6666259765625}
+        - {data_key: Date, id: ZKYZCW, title: Date}
+        - {data_key: Length, id: QIWBAG, title: Length}
+      type: DataGrid
+    layout_properties: {}
     name: flow_panel_1
     properties: {}
     type: FlowPanel
-  - components:
-    - name: repeating_panel_1
-      properties: {item_template: Form1.RowTemplate1}
-      type: RepeatingPanel
-    layout_properties: {}
-    name: data_grid_1
-    properties: {}
-    type: DataGrid
   navigation:
   - components:
     - event_bindings: {}

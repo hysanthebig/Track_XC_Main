@@ -48,7 +48,8 @@ def retrieve_id(team_id,year,sport):
           "Gender": gender,
           "Grade": r["GradeID"],
           "StudentID": r["IDAthlete"],
-          "Year":year
+          "Year":year,
+          "Sport":"Track"
         })
 
   else:
@@ -61,7 +62,8 @@ def retrieve_id(team_id,year,sport):
         "Gender": gender,
         "Grade": r["ShortDesc"],
         "StudentID": r["IDAthlete"],
-        "Year": year
+        "Year": year,
+        "Sport":"XC"
       })
   df = pd.DataFrame(records)
   df = df.drop_duplicates().reset_index(drop = True)
