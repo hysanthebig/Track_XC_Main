@@ -5,37 +5,130 @@ components_by_slot:
     name: icon_button_1
     properties: {icon: 'mi:sync', visible: false}
     type: form:dep_lin1x4oec0ytd:_Components.IconButton
-  content:
   - components:
     - components:
-      - name: repeating_panel_1
+      - name: repeating_panel_3
         properties: {item_template: Form1.RowTemplate2}
         type: RepeatingPanel
-      layout_properties: {width: 1069.0414199218749}
-      name: data_grid_1
+      layout_properties: {grid_position: 'WIERHI,RBAZPJ'}
+      name: data_grid_3
       properties:
         columns:
-        - {data_key: Rank, id: ITHVDS, title: Rank}
-        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
+        - {data_key: Runner, expand: true, id: VYFUCS, title: Runner, width: 173.7777099609375}
         - {data_key: Time, id: OMVYVW, title: Time}
         - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: 80.111083984375}
         - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 235.6666259765625}
         - {data_key: Date, id: ZKYZCW, title: Date}
         - {data_key: Length, id: QIWBAG, title: Length}
+        rows_per_page: 100
+      type: DataGrid
+    layout_properties: {}
+    name: column_panel_6
+    properties: {}
+    type: ColumnPanel
+  content:
+  - components:
+    - components: []
+      layout_properties: {}
+      name: column_panel_5
+      properties: {}
+      type: ColumnPanel
+    - components:
+      - name: repeating_panel_1
+        properties: {item_template: Form1.RowTemplate2}
+        type: RepeatingPanel
+      layout_properties: {expand: true, width: 1000}
+      name: data_grid_1
+      properties:
+        columns:
+        - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
+        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Time, id: OMVYVW, title: Time}
+        - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: 80.111083984375}
+        - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 232.6666259765625}
+        - {data_key: Date, id: ZKYZCW, title: Date}
+        - {data_key: Length, id: QIWBAG, title: Length}
+        rows_per_page: 100
       type: DataGrid
     layout_properties: {}
     name: flow_panel_1
-    properties: {}
+    properties: {gap: none, vertical_align: top}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
+      name: column_panel_7
+      properties: {}
+      type: ColumnPanel
+    - components:
+      - name: repeating_panel_2
+        properties: {item_template: Form1.RowTemplate2}
+        type: RepeatingPanel
+      layout_properties: {expand: true, width: 1000}
+      name: data_grid_2
+      properties:
+        columns:
+        - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
+        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Time, id: OMVYVW, title: Time}
+        - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: 80.111083984375}
+        - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 232.6666259765625}
+        - {data_key: Date, id: ZKYZCW, title: Date}
+        - {data_key: Length, id: QIWBAG, title: Length}
+        rows_per_page: 100
+      type: DataGrid
+    layout_properties: {}
+    name: flow_panel_2
+    properties: {gap: none, vertical_align: top}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
+      name: column_panel_8
+      properties: {}
+      type: ColumnPanel
+    - components:
+      - name: repeating_panel_4
+        properties: {item_template: Form1.RowTemplate2}
+        type: RepeatingPanel
+      layout_properties: {expand: true, width: 1000}
+      name: data_grid_4
+      properties:
+        columns:
+        - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
+        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Time, id: OMVYVW, title: Time}
+        - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: 80.111083984375}
+        - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 232.6666259765625}
+        - {data_key: Date, id: ZKYZCW, title: Date}
+        - {data_key: Length, id: QIWBAG, title: Length}
+        rows_per_page: 100
+      type: DataGrid
+    layout_properties: {}
+    name: flow_panel_3
+    properties: {gap: none, vertical_align: top}
     type: FlowPanel
   navigation:
   - components:
+    - layout_properties: {full_width_row: false, grid_position: 'RAEVEX,FWNMPG'}
+      name: PR_button
+      properties:
+        align: full
+        spacing:
+          margin: [null, null, null, 4]
+        text: Personal Records
+      type: form:dep_lin1x4oec0ytd:_Components.Button
+    layout_properties: {}
+    name: column_panel_1
+    properties: {background: 'theme:Secondary Container'}
+    type: ColumnPanel
+  - components:
     - event_bindings: {}
-      layout_properties: {grid_position: 'OTYLKW,JTJGWD'}
+      layout_properties: {grid_position: 'QBJFCB,GWCEUC'}
       name: refresh_button
       properties: {icon: 'mi:sync'}
       type: form:dep_lin1x4oec0ytd:_Components.IconButton
     layout_properties: {}
-    name: column_panel_1
+    name: column_panel_2
     properties: {}
     type: ColumnPanel
 is_package: true
