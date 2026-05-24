@@ -137,7 +137,8 @@ components_by_slot:
     properties: {}
     type: ColumnPanel
   - components:
-    - data_bindings: []
+    - components: []
+      data_bindings: []
       layout_properties: {expand: true, width: 128.688}
       name: gender_button
       properties: {align: full, appearance: tonal, italic: false}
@@ -146,6 +147,11 @@ components_by_slot:
       layout_properties: {expand: true, width: 143.688}
       name: year_button
       properties: {align: full, appearance: tonal, italic: false}
+      type: form:dep_lin1x4oec0ytd:_Components.ButtonMenu
+    - data_bindings: []
+      layout_properties: {}
+      name: sport_button
+      properties: {align: full, appearance: tonal, italic: false, text: ''}
       type: form:dep_lin1x4oec0ytd:_Components.ButtonMenu
     layout_properties: {}
     name: flow_panel_4
