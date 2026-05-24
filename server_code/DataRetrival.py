@@ -100,7 +100,9 @@ def get_records(row,sport,allowed):
       event = event_dict[r["EventID"]]
       #check data
       if r["SchoolID"] in allowed:
+        print("a")
         if r["SeasonID"] in allowed[r["SchoolID"]]:     
+          print(b)
           if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ","NT"]:
             records.append({
               "School":school_dict[str(r["SchoolID"])]["SchoolName"],
@@ -119,20 +121,20 @@ def get_records(row,sport,allowed):
       event_dict[r["Meters"]] = r["Distance"]
 
     for r in data.get("resultsXC", []):
-      school = school_dict[str(r["SchoolID"])]["SchoolName"]
-      if r["SeasonID"] in allowed["School"]:
-        records.append({
-          "School": school ,
-          "Runner": student,
-          "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-          "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
-          "Time": r["Result"],
-          "Length": str(event_dict[r["Distance"]]),
-          "Year":r["SeasonID"],
-          "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-          "Gender":row["Gender"],
-          "Sport":"XC"
-        })
+      if r["SchoolID"] in allowed:
+        if r["SeasonID"] in allowed[r["SchoolID"]]:
+          records.append({
+            "School": school_dict[str(r["SchoolID"])]["SchoolName"] ,
+            "Runner": student,
+            "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
+            "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
+            "Time": r["Result"],
+            "Length": str(event_dict[r["Distance"]]),
+            "Year":r["SeasonID"],
+            "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
+            "Gender":row["Gender"],
+            "Sport":"XC"
+          })
 
 
   return records
@@ -141,8 +143,8 @@ def get_records(row,sport,allowed):
   # -------------------------
   # MAIN PIPELINE
   # -------------------------
-  @anvil.server.background_task
-  def import_all_records(sport):
+@anvil.server.background_task
+def import_all_records(sport):
     global start_time
     if sport == "track":
       rows = list(app_tables.track_id_table.search())
@@ -199,6 +201,6 @@ def get_records(row,sport,allowed):
     # -------------------------
     # CALLABLE START FUNCTION
     # -------------------------
-    @anvil.server.callable
-    def start_import(sport):
-      anvil.server.launch_background_task("import_all_records",sport)
+@anvil.server.callable
+def start_import(sport):
+  anvil.server.launch_background_task("import_all_records",sport)
