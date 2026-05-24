@@ -24,6 +24,8 @@ distances_list = ["800 Meters","1600 Meters","3200 Meters"]
 # HELPERS
 # -------------------------
 
+def al
+
 
 def time_to_seconds(time_str):
   try:
