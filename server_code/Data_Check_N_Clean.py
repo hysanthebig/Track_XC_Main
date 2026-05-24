@@ -30,9 +30,10 @@ def normalize_df(df):
   return df
 
 @anvil.server.callable
-def verify_pr():
+def verify_pr(df = None):
   print("Verification Started")
-  df = normalize_df(pd.DataFrame(app_tables.pr_table.search()).drop(columns = "Team Position"))
+  if df is None:
+    df = normalize_df(pd.DataFrame(app_tables.pr_table.search()).drop(columns = "Team Position"))
   truth_df = normalize_df(pd.DataFrame(app_tables.pr_from_an.search()))
   
   df_equals_boolean = df.equals(truth_df)
@@ -54,7 +55,18 @@ def verify_pr():
     print("="*20)
     print(df.compare(truth_df))
 
-  
+def convert_df_to_pr(df):
+  all_df = []
+  for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
+    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
+    print(dfs)
+    dfs["Team Position"] = dfs.index + 1
+    all_df.append(dfs)
+
+  pr_df = pd.concat(all_df, ignore_index = True)
+  return pr_df
+
+
 def clean_data(df):
   df = normalize_df(df)
 
@@ -66,9 +78,18 @@ def clean_data(df):
   df.drop_duplicates(inplace = True)
   return df
 
-  
+@anvil.server.callable
 def table_cleaner(table):
-  df = df = pd.DataFrame(app_tables[table].search())
-  clean_data(df)
+  df = pd.DataFrame(app_tables[table].search())
+  df = clean_data(df)
+  df_pr = convert_df_to_pr(df)
+  verify_pr(df_pr)
+  app_tables.snapshot_table.add_rows(df_pr)
+
+@anvil.server.callable
+def snapshot_to_main():
+  rows = app_tables.snapshot_table.search()
+  app_tables.race_data_table.delete_all_rows()
+  app_tables.race_data_table.add_rows(rows)
   
   

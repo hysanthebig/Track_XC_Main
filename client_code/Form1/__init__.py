@@ -32,8 +32,10 @@ class Form1(Form1Template):
 
   if 1 == 0:
     anvil.server.call('verify_key_pr_retrival')
-  if 1 == 1:
-    anvil.server.call("verify_pr")
+  if 1 == 0:
+    anvil.server.call("table_cleaner")
+  if 1 == 0:
+    anvil.server.call("snapshot_to_main")
 
   def display_pr(self,panel,length,gender,year):
     rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year)
