@@ -25,8 +25,8 @@ class Form1(Form1Template):
   #When updating anything, sport is 'track' and 'xc', all lowercase
   if 1 == 0:
     anvil.server.call("get_id_launcher","xc")
-  if 1 == 1:
-    anvil.server.call('start_import',"track")
+  if 1 == 0:
+    anvil.server.call('start_import',"xc")
   if 1 == 0:
     anvil.server.call("refresh_pr")
 

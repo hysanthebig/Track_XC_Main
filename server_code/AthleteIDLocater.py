@@ -25,7 +25,7 @@ def retrieve_id(row,sport):
   if sport == "track":
     year = str(row["Year"] + 1)
   else:
-    year = str(row["Year"]+1)
+    year = str(row["Year"])
   
   if sport == "track":
     url = f"https://www.athletic.net/api/v1/TeamHome/GetTeamEventRecords?teamId={team_id}&seasonId={year}"

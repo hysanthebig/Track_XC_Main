@@ -29,12 +29,13 @@ def get_allowed():
 
   rows = list(app_tables.jrcbs_coach_list.search())
   for row in rows:
-    schoolid = row["School ID"]
+    schoolid = int(row["School ID"])
     year = row["Year"]
     if schoolid not in allowed:
       allowed[schoolid] = []
 
     allowed[schoolid].append(year)
+  print(allowed)
   return allowed
 
 
@@ -100,9 +101,7 @@ def get_records(row,sport,allowed):
       event = event_dict[r["EventID"]]
       #check data
       if r["SchoolID"] in allowed:
-        print("a")
-        if r["SeasonID"] in allowed[r["SchoolID"]]:     
-          print(b)
+        if (r["SeasonID"]-1) in allowed[r["SchoolID"]]:     
           if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ","NT"]:
             records.append({
               "School":school_dict[str(r["SchoolID"])]["SchoolName"],
