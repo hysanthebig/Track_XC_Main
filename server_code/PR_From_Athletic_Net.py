@@ -93,7 +93,7 @@ def import_pr(row):
           "Length": r["Event"],
           "Date": r["EndDate"].replace("T00:00:00", ""),
           "Year" : year,
-          "Sport":sport,
+          "Sport":"Track",
           "StudentID":r["IDAthlete"]
         })
   else:
@@ -111,7 +111,7 @@ def import_pr(row):
           "Length": str(r["Distance"]),
           "Date": r["MeetDate"].replace("T00:00:00", ""),
           "Year":year,
-          "Sport":sport,
+          "Sport":"XC",
           "StudentID":r["IDAthlete"]
         })
   print(records)

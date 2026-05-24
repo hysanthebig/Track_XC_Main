@@ -17,11 +17,44 @@ import pandas as pd
 #   return 42
 #
 
-def sort_df(df):
-  df.sort_values(by = ["StudentID","time_seconds",])
+def normalize_df(df):
+  df = df.sort_index(axis = 1)
+  df = df.sort_values(by = ["StudentID","Length","Year"])
+  df = df.reset_index(drop = True)
+  return df
 
+@anvil.server.callable
 def verify_pr():
-  df = pd.DataFrame(app_tables.pr_table.search())
-  truth_df = pd.DataFrame(app_tables.pr_from_an.search())
+  print("Verification Started")
+  df = normalize_df(pd.DataFrame(app_tables.pr_table.search()).drop(columns = "Team Position"))
+  truth_df = normalize_df(pd.DataFrame(app_tables.pr_from_an.search()))
+  
+  df_equals_boolean = df.equals(truth_df)
+  
+  if df_equals_boolean:
+    print(f"DF Confirmed {df_equals_boolean}")
+  else:
+    print(f"DF Denied {df_equals_boolean}")
+    print("="*20)
+    print(f"SELF Null Values : {df.isna().sum()}")
+    print(f"TRUTH Null Values : {truth_df.isna().sum()}")
+    print("="*20)
+    print(f"SELF_DF Index : {max(df.index)}")
+    print(f"TRUTH_DF Index : {max(truth_df.index)}")
+    print(f"Columns of SELF : {list(df.columns)}")
+    print(f"Columns of TRUTH : {list(truth_df.columns)}")
+    print(f"ColumnTypes of SELF : {list(df.dtypes)}")
+    print(f"ColumnTypes of TRUTH : {list(truth_df.dtypes)}")
+    print("="*20)
+    print(df.compare(truth_df))
 
+  
+def clean_data(df):
+  df = normalize_df(df)
+  if df.isna().any().any():
+    print(df[df.isna().any(axis = 1)])
+    print("Check NAN rows")
+    return
+  df.drop_duplicates()
+  
   

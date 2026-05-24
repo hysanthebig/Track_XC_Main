@@ -31,10 +31,13 @@ def get_allowed():
   for row in rows:
     schoolid = int(row["School ID"])
     year = row["Year"]
-    if schoolid not in allowed:
-      allowed[schoolid] = []
+    sport = row["Sport"]
+    if sport not in allowed:
+      allowed[sport] = {}
+    if schoolid not in allowed[sport]:
+      allowed[sport][schoolid] = []
 
-    allowed[schoolid].append(year)
+    allowed[sport][schoolid].append(year)
   print(allowed)
   return allowed
 
@@ -100,8 +103,8 @@ def get_records(row,allowed):
     for r in data.get("resultsTF", []):
       event = event_dict[r["EventID"]]
       #check data
-      if r["SchoolID"] in allowed:
-        if (r["SeasonID"]-1) in allowed[r["SchoolID"]]:     
+      if r["SchoolID"] in allowed['track']:
+        if (r["SeasonID"]) in allowed["track"][r["SchoolID"]]:     
           if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ","NT"]:
             records.append({
               "School":school_dict[str(r["SchoolID"])]["SchoolName"],
@@ -121,8 +124,8 @@ def get_records(row,allowed):
       event_dict[r["Meters"]] = r["Distance"]
 
     for r in data.get("resultsXC", []):
-      if r["SchoolID"] in allowed:
-        if r["SeasonID"] in allowed[r["SchoolID"]]:
+      if r["SchoolID"] in allowed["xc"]:
+        if r["SeasonID"] in allowed["xc"][r["SchoolID"]]:
           records.append({
             "School": school_dict[str(r["SchoolID"])]["SchoolName"] ,
             "Runner": student,
