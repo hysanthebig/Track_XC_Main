@@ -54,15 +54,15 @@ def time_to_seconds(time_str):
 # -------------------------
 # FETCH FUNCTION
 # -------------------------
-def get_records(row,sport,allowed):
+def get_records(row,allowed):
   global correct_count
   global error_count
 
   student_id = row["StudentID"]
   student = row["Runner"]
-  years = int(row["Year"])
+  sport = row["Sport"]
 
-  if sport == "track":
+  if sport == "Track":
     sport_id = "tf"
   else:
     sport_id = "xc"
@@ -93,7 +93,7 @@ def get_records(row,sport,allowed):
   school_dict = data.get("allTeams",[])
   grade_dict = data.get("grades",[])
 
-  if sport == "track":
+  if sport == "Track":
     for r in data.get("eventsTF",[]):
       event_dict[r["IDEvent"]] = r["Event"]
 
@@ -106,11 +106,12 @@ def get_records(row,sport,allowed):
             records.append({
               "School":school_dict[str(r["SchoolID"])]["SchoolName"],
               "Runner": student,
+              "StudentID":student_id,
               "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
               "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),        
               "Time": r["Result"].replace("a", ""),
               "Length": event,
-              "Year":r["SeasonID"],
+              "Year":int(r["SeasonID"]),
               "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
               "Gender":row["Gender"],
               "Sport":"Track"
@@ -125,11 +126,12 @@ def get_records(row,sport,allowed):
           records.append({
             "School": school_dict[str(r["SchoolID"])]["SchoolName"] ,
             "Runner": student,
+            "StudentID":student_id,
             "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
             "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
             "Time": r["Result"],
             "Length": str(event_dict[r["Distance"]]),
-            "Year":r["SeasonID"],
+            "Year":int(r["SeasonID"]),
             "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
             "Gender":row["Gender"],
             "Sport":"XC"
@@ -143,12 +145,9 @@ def get_records(row,sport,allowed):
   # MAIN PIPELINE
   # -------------------------
 @anvil.server.background_task
-def import_all_records(sport):
+def import_all_records():
     global start_time
-    if sport == "track":
-      rows = list(app_tables.track_id_table.search())
-    else:
-      rows = list(app_tables.xc_id_table.search())
+    rows = list(app_tables.athlete_table.search())
 
     all_records = []
 
@@ -158,7 +157,7 @@ def import_all_records(sport):
     start_time = time.time()
     allowed = get_allowed()
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-      futures = [executor.submit(get_records, row,sport,allowed) for row in rows]
+      futures = [executor.submit(get_records,row,allowed) for row in rows]
 
       for future in as_completed(futures):
         result = future.result()
@@ -182,24 +181,17 @@ def import_all_records(sport):
         yield lst[i:i+size]
 
     if error_count == 0:
-      if sport == "track":
-        app_tables.track_table.delete_all_rows()
-        for chunk in chunked(all_records, BATCH_SIZE):
-          print(chunk)
-          app_tables.track_table.add_rows(chunk)
-        print("DONE")
-      else:
-        app_tables.xc_table.delete_all_rows()
-        for chunk in chunked(all_records, BATCH_SIZE):
-          print(chunk)
-          app_tables.xc_table.add_rows(chunk)
-        print("DONE")
-    return "Completed"
+      app_tables.race_data_table.delete_all_rows()
+      for chunk in chunked(all_records, BATCH_SIZE):
+        print(chunk)
+        app_tables.race_data_table.add_rows(chunk)
+      print("DONE")
+
 
 
     # -------------------------
     # CALLABLE START FUNCTION
     # -------------------------
 @anvil.server.callable
-def start_import(sport):
-  anvil.server.launch_background_task("import_all_records",sport)
+def start_import():
+  anvil.server.launch_background_task("import_all_records")

@@ -24,13 +24,14 @@ class Form1(Form1Template):
 
   #When updating anything, sport is 'track' and 'xc', all lowercase
   if 1 == 0:
-    anvil.server.call("get_id_launcher","xc")
-  if 1 == 0:
-    anvil.server.call('start_import',"xc")
+    anvil.server.call("get_id_launcher")
+  if 1 == 1:
+    anvil.server.call('start_import')
   if 1 == 0:
     anvil.server.call("refresh_pr")
 
-  
+  if 1 == 0:
+    anvil.server.call('merger')
 
   def display_pr(self,panel,length,gender,year):
     rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year)
