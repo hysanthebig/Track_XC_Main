@@ -21,7 +21,7 @@ class Form1(Form1Template):
 
     # Any code you write here will run before the form opens.
 
-
+#IMPORT DATA AND TABLES================================================================================================================================================================================================================
   #When updating anything, sport is 'track' and 'xc', all lowercase
   if 1 == 0:
     anvil.server.call("get_id_launcher")
@@ -30,13 +30,28 @@ class Form1(Form1Template):
   if 1 == 0:
     anvil.server.call("refresh_pr")
 
+#CLEAN DATA AND VERIFY=========================================================================================================================
   if 1 == 0:
     anvil.server.call('verify_key_pr_retrival')
-  if 1 == 0:
-    anvil.server.call("table_cleaner")
+  if 1 == 0: #table cleaner includes a verification check
+    anvil.server.call("table_cleaner","race_data_table")
   if 1 == 0:
     anvil.server.call("snapshot_to_main")
+    
+  if 1 == 0:
+    anvil.server.call("verify_pr")
+  if 1 == 1:
+    anvil.server.call("copy_main_to_history")
 
+
+#================================================================================================================================================================================================================
+
+
+
+
+
+
+  
   def display_pr(self,panel,length,gender,year):
     rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year)
     panel.items = rows
@@ -95,6 +110,7 @@ class Form1(Form1Template):
   def sport_item_click(self,sender, **event_args):
     self.sport_button.text = sender.text
     self.refresh_grids()
+
 
 
 

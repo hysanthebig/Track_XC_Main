@@ -30,7 +30,7 @@ def refresh_pr():
   all_df = []
   
   for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
-    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
+    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("StudentID",keep = "first").reset_index(drop = True)
     print(dfs)
     dfs["Team Position"] = dfs.index + 1
     all_df.append(dfs)

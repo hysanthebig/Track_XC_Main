@@ -16,6 +16,11 @@ from ServerMain import filter_df
 # def say_hello(name):
 #   print("Hello, " + name + "!")
 #   return 42
+
+pd.set_option('display.max_columns',None)
+pd.set_option('display.max_rows',None)
+pd.set_option('display.width',None)
+
 #
 distance_list = ["800 Meters","1600 Meters","3200 Meters"]
 xc_distance_list = ["2.0","3.0"]
@@ -33,11 +38,13 @@ def normalize_df(df):
 def verify_pr(df = None):
   print("Verification Started")
   if df is None:
-    df = normalize_df(pd.DataFrame(app_tables.pr_table.search()).drop(columns = "Team Position"))
+    df = (pd.DataFrame(app_tables.pr_table.search()).drop(columns = "Team Position"))
+  df = normalize_df(df)
   truth_df = normalize_df(pd.DataFrame(app_tables.pr_from_an.search()))
-  
+
+
   df_equals_boolean = df.equals(truth_df)
-  
+
   if df_equals_boolean:
     print(f"DF Confirmed {df_equals_boolean}")
   else:
@@ -58,9 +65,8 @@ def verify_pr(df = None):
 def convert_df_to_pr(df):
   all_df = []
   for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
-    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
-    print(dfs)
-    dfs["Team Position"] = dfs.index + 1
+    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("StudentID",keep = "first").reset_index(drop = True)
+
     all_df.append(dfs)
 
   pr_df = pd.concat(all_df, ignore_index = True)
@@ -78,18 +84,38 @@ def clean_data(df):
   df.drop_duplicates(inplace = True)
   return df
 
+
+
+
 @anvil.server.callable
-def table_cleaner(table):
-  df = pd.DataFrame(app_tables[table].search())
+def table_cleaner(table=None,auto_df = None):
+  if table is not None:
+    df = pd.DataFrame(app_tables[table].search())
+  else:
+    df = auto_df
   df = clean_data(df)
   df_pr = convert_df_to_pr(df)
   verify_pr(df_pr)
-  app_tables.snapshot_table.add_rows(df_pr)
+  app_tables.snapshot_table.delete_all_rows()
+  app_tables.snapshot_table.add_rows(df.to_dict(orient = "records"))
+  print("Updated to Snapshot")
 
 @anvil.server.callable
 def snapshot_to_main():
+  print("Uploading Snapshot to Main")
   rows = app_tables.snapshot_table.search()
   app_tables.race_data_table.delete_all_rows()
   app_tables.race_data_table.add_rows(rows)
+  print("Snapshot to main completed")
+
+@anvil.server.callable
+def copy_main_to_history():
+  print("Adding new rows to backup")
+  rowsdf = pd.DataFrame(app_tables.race_data_table.search())
+  df = pd.DataFrame(app_tables.backup_race_data.search())
+  df = pd.concat([df,rowsdf],ignore_index = True)
+  df.drop_duplicates(keep = False,inplace = True)
+  app_tables.backup_race_data.add_rows(df.to_dict(orient = "records"))
+  print("New rows added")
   
   

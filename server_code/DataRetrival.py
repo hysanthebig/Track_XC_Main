@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
 import time
 import random
+from Data_Check_N_Clean import table_cleaner
 
 
 error_count = 0
@@ -18,7 +19,7 @@ MAX_WORKERS = 1
 BATCH_SIZE = 500
 
 distances_list = ["800 Meters","1600 Meters","3200 Meters"]
-
+xc_distance_list = ["2.0","3.0"]
 
 # -------------------------
 # HELPERS
@@ -122,22 +123,24 @@ def get_records(row,allowed):
   else:
     for r in data.get("distancesXC",[]):
       event_dict[r["Meters"]] = r["Distance"]
-
+    
     for r in data.get("resultsXC", []):
+      event = str(event_dict[r["Distance"]])
       if r["SchoolID"] in allowed["xc"]:
         if r["SeasonID"] in allowed["xc"][r["SchoolID"]]:
-          records.append({
-            "School": school_dict[str(r["SchoolID"])]["SchoolName"] ,
-            "Runner": student,
-            "StudentID":student_id,
-            "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-            "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
-            "Time": r["Result"],
-            "Length": str(event_dict[r["Distance"]]),
-            "Year":int(r["SeasonID"]),
-            "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-            "Gender":row["Gender"],
-            "Sport":"XC"
+          if event in xc_distance_list:
+            records.append({
+              "School": school_dict[str(r["SchoolID"])]["SchoolName"] ,
+              "Runner": student,
+              "StudentID":student_id,
+              "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
+              "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
+              "Time": r["Result"],
+              "Length": event,
+              "Year":int(r["SeasonID"]),
+              "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
+              "Gender":row["Gender"],
+              "Sport":"XC"
           })
 
 
@@ -174,21 +177,9 @@ def import_all_records():
       r["time_seconds"] = time_to_seconds(r["Time"])
 
 
-
-
-    # -------------------------
-    # 3. BATCH INSERT INTO ANVIL
-    # -------------------------
-    def chunked(lst, size):
-      for i in range(0, len(lst), size):
-        yield lst[i:i+size]
-
-    if error_count == 0:
-      app_tables.race_data_table.delete_all_rows()
-      for chunk in chunked(all_records, BATCH_SIZE):
-        print(chunk)
-        app_tables.race_data_table.add_rows(chunk)
-      print("DONE")
+    ###clean and verifies to put into snapshot
+    table_cleaner(pd.DataFrame(all_records))
+    
 
 
 

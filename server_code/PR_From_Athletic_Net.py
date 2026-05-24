@@ -15,9 +15,8 @@ BATCH_SIZE = 500
 
 distance_list = [
   '800 Meters', '1600 Meters', '3200 Meters',
-
 ]
-
+xc_distance_list =["2.0","3.0"]
 
 # -------------------------
 # HELPERS
@@ -98,22 +97,23 @@ def import_pr(row):
         })
   else:
     for r in data.get("results", []):
-      name = f"{r['FirstName']} {r['LastName']}"
-      gender = "Female" if r["GenderID"] == "F" else "Male"
-
-      records.append({
-          "School": school,
-          "Runner": name,
-          "Gender": gender,
-          "Grade": int(r["ShortDesc"]),
-          "Meet": r["MeetName"],
-          "Time": r["Result"].replace("a", ""),
-          "Length": str(r["Distance"]),
-          "Date": r["MeetDate"].replace("T00:00:00", ""),
-          "Year":year,
-          "Sport":"XC",
-          "StudentID":r["IDAthlete"]
-        })
+      if str(r["Distance"]) in xc_distance_list:
+        name = f"{r['FirstName']} {r['LastName']}"
+        gender = "Female" if r["GenderID"] == "F" else "Male"
+  
+        records.append({
+            "School": school,
+            "Runner": name,
+            "Gender": gender,
+            "Grade": int(r["ShortDesc"]),
+            "Meet": r["MeetName"],
+            "Time": r["Result"].replace("a", ""),
+            "Length": str(r["Distance"]),
+            "Date": r["MeetDate"].replace("T00:00:00", ""),
+            "Year":year,
+            "Sport":"XC",
+            "StudentID":r["IDAthlete"]
+          })
   print(records)
   return records
 
