@@ -17,9 +17,12 @@ import pandas as pd
 #
 
 ###Retrieve student ids from athletic net
-@anvil.server.callable
-def retrieve_id(team_id,year,sport):
-  print("entered")
+MAX_WORKERS = 10
+
+def retrieve_id(row,sport):
+
+  team_id = row["School ID"]
+  year = row["Year"]
   
   if sport == "track":
     url = f"https://www.athletic.net/api/v1/TeamHome/GetTeamEventRecords?teamId={team_id}&seasonId={year}"
@@ -49,7 +52,8 @@ def retrieve_id(team_id,year,sport):
           "Grade": r["GradeID"],
           "StudentID": r["IDAthlete"],
           "Year":year,
-          "Sport":"Track"
+          "Sport":"Track",
+          "School":row["School"]
         })
 
   else:
@@ -63,18 +67,34 @@ def retrieve_id(team_id,year,sport):
         "Grade": r["ShortDesc"],
         "StudentID": r["IDAthlete"],
         "Year": year,
-        "Sport":"XC"
+        "Sport":"XC",
+        "School":row["School"]
       })
-  df = pd.DataFrame(records)
-  df = df.drop_duplicates().reset_index(drop = True)
-  to_add = df.to_dict(orient = "records")
-  if sport == "track":
-    for row in to_add:
-      app_tables.track_id_table.add_row(**row)
-  else:
-    for row in to_add:
-      app_tables.xc_id_table.add_row(**row)
+  
+  return records
+
     
 
+@anvil.server.callable
+def get_id_launcher(sport):
+  
+  rows = list(app_tables.jrcbs_coach_list.search())
 
+  all_records = []
 
+  with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+    futures = [executor.submit(retrieve_id(row,sport), row,sport) for row in rows]
+
+    for future in as_completed(futures):
+      result = future.result()
+      if result:
+        all_records.extend(result)
+
+  
+  df = pd.DataFrame(all_records)
+  df = df["Runner"].drop_duplicates().reset_index(drop = True)
+  to_add = df.to_dict(orient = "records")
+  if sport == "track":
+    app_tables.track_id_table.add_rows(to_add)
+  else:
+    app_tables.xc_id_table.add_rows(to_add)
