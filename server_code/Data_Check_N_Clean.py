@@ -18,7 +18,7 @@ import pandas as pd
 #
 
 def sort_df(df):
-  df.sort_values(by = "StudentID")
+  df.sort_values(by = ["StudentID","time_seconds",])
 
 def verify_pr():
   df = pd.DataFrame(app_tables.pr_table.search())
