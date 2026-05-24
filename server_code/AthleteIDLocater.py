@@ -17,12 +17,15 @@ import pandas as pd
 #
 
 ###Retrieve student ids from athletic net
-MAX_WORKERS = 10
+MAX_WORKERS = 5
 
 def retrieve_id(row,sport):
 
   team_id = row["School ID"]
-  year = row["Year"]
+  if sport == "track":
+    year = str(row["Year"] + 1)
+  else:
+    year = str(row["Year"]+1)
   
   if sport == "track":
     url = f"https://www.athletic.net/api/v1/TeamHome/GetTeamEventRecords?teamId={team_id}&seasonId={year}"
@@ -83,7 +86,7 @@ def get_id_launcher(sport):
   all_records = []
 
   with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-    futures = [executor.submit(retrieve_id(row,sport), row,sport) for row in rows]
+    futures = [executor.submit(retrieve_id, row,sport) for row in rows]
 
     for future in as_completed(futures):
       result = future.result()
@@ -92,9 +95,12 @@ def get_id_launcher(sport):
 
   
   df = pd.DataFrame(all_records)
-  df = df["Runner"].drop_duplicates().reset_index(drop = True)
+  df = df.drop_duplicates(subset = ["Runner"]).reset_index(drop = True)
   to_add = df.to_dict(orient = "records")
   if sport == "track":
+    app_tables.track_id_table.delete_all_rows()
     app_tables.track_id_table.add_rows(to_add)
   else:
+    app_tables.xc_id_table.delete_all_rows()
     app_tables.xc_id_table.add_rows(to_add)
+  print(f"{sport}: IDs Updated")

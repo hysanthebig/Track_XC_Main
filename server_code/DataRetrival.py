@@ -3,11 +3,18 @@ from anvil.tables import app_tables
 from curl_cffi import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
+import time
+import random
+
+
+error_count = 0
+
+correct_count = 0
 
 # -------------------------
 # CONFIG
 # -------------------------
-MAX_WORKERS = 10
+MAX_WORKERS = 1
 BATCH_SIZE = 500
 
 distances_list = ["800 Meters","1600 Meters","3200 Meters"]
@@ -34,24 +41,37 @@ def time_to_seconds(time_str):
 # FETCH FUNCTION
 # -------------------------
 def get_records(row,sport):
+  global correct_count
+  global error_count
+  
   student_id = row["StudentID"]
   student = row["Runner"]
+  years = int(row["Year"])
+  
   if sport == "track":
     sport_id = "tf"
   else:
     sport_id = "xc"
-
+  
   url = f"https://www.athletic.net/api/v1/AthleteBio/GetAthleteBioData?athleteId={student_id}&sport={sport_id}&level=0"
 
-  res = requests.get(url, impersonate="chrome110")
+  time.sleep(random.uniform(0.2,0.5))
+  for attempt in range(3):
+    res = requests.get(url, impersonate="chrome110")
 
-  if res.status_code != 200:
-    print("Error")
-    print(res.status_code)
-    print(url)
+    if res.status_code == 200:
+      break
+
+    if res.status_code != 200:
+      print(f"ERROR: CODE {res.status_code} |Attempt {attempt + 1 }| Time : {time.time()-start_time} |Completed {correct_count} Errors {error_count}  | URL : {url} ")
+      time.sleep(random.uniform(5,6))
+  else:
+    error_count += 1
     return []
 
+    
   data = res.json()
+  correct_count += 1
 
   records = []
   event_dict = {}
@@ -64,40 +84,43 @@ def get_records(row,sport):
       event_dict[r["IDEvent"]] = r["Event"]
       
     for r in data.get("resultsTF", []):
-
-      event = event_dict[r["EventID"]]
-      if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ"]:
-        records.append({
-          "School":school_dict[str(r["SchoolID"])]["SchoolName"],
-          "Runner": student,
-          "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-          "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),        
-          "Time": r["Result"].replace("a", ""),
-          "Length": event,
-          "Year":r["SeasonID"],
-          "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-          "Gender":row["Gender"],
-          "Sport":"Track"
-        })
+      school = school_dict[str(r["SchoolID"])]["SchoolName"]
+      if r["SeasonID"] == years:
+        event = event_dict[r["EventID"]]
+        if event in distances_list and r['Result'] not in ["DNS","DNF","SCR","DQ","NT"]:
+          records.append({
+            "School":school,
+            "Runner": student,
+            "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
+            "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),        
+            "Time": r["Result"].replace("a", ""),
+            "Length": event,
+            "Year":r["SeasonID"],
+            "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
+            "Gender":row["Gender"],
+            "Sport":"Track"
+          })
   else:
     for r in data.get("distancesXC",[]):
       event_dict[r["Meters"]] = r["Distance"]
       
     for r in data.get("resultsXC", []):
-      records.append({
-        "School": school_dict[str(r["SchoolID"])]["SchoolName"],
-        "Runner": student,
-        "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
-        "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
-        "Time": r["Result"],
-        "Length": str(event_dict[r["Distance"]]),
-        "Year":r["SeasonID"],
-        "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
-        "Gender":row["Gender"],
-        "Sport":"XC"
+      school = school_dict[str(r["SchoolID"])]["SchoolName"]
+      if r["SeasonID"] == years:
+        records.append({
+          "School": school ,
+          "Runner": student,
+          "Meet": meet_dict[str(r["MeetID"])]["MeetName"],
+          "Date" : meet_dict[str(r["MeetID"])]["EndDate"].replace("T00:00:00", ""),
+          "Time": r["Result"],
+          "Length": str(event_dict[r["Distance"]]),
+          "Year":r["SeasonID"],
+          "Grade":grade_dict[f"{str(r['SchoolID'])}_{str(r['SeasonID'])}"],
+          "Gender":row["Gender"],
+          "Sport":"XC"
       })
-      
-  print(records)
+
+  
   return records
 
 
@@ -106,6 +129,7 @@ def get_records(row,sport):
 # -------------------------
 @anvil.server.background_task
 def import_all_records(sport):
+  global start_time
   if sport == "track":
     rows = list(app_tables.track_id_table.search())
   else:
@@ -116,6 +140,7 @@ def import_all_records(sport):
   # -------------------------
   # 1. PARALLEL SCRAPE
   # -------------------------
+  start_time = time.time()
   with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
     futures = [executor.submit(get_records, row,sport) for row in rows]
 
@@ -140,18 +165,19 @@ def import_all_records(sport):
     for i in range(0, len(lst), size):
       yield lst[i:i+size]
 
-  if sport == "track":
-    app_tables.track_table.delete_all_rows()
-    for chunk in chunked(all_records, BATCH_SIZE):
-      print(chunk)
-      app_tables.track_table.add_rows(chunk)
-  else:
-    app_tables.xc_table.delete_all_rows()
-    for chunk in chunked(all_records, BATCH_SIZE):
-      print(chunk)
-      app_tables.xc_table.add_rows(chunk)
-
-  print("DONE")
+  if error_count == 0:
+    if sport == "track":
+      app_tables.track_table.delete_all_rows()
+      for chunk in chunked(all_records, BATCH_SIZE):
+        print(chunk)
+        app_tables.track_table.add_rows(chunk)
+      print("DONE")
+    else:
+      app_tables.xc_table.delete_all_rows()
+      for chunk in chunked(all_records, BATCH_SIZE):
+        print(chunk)
+        app_tables.xc_table.add_rows(chunk)
+      print("DONE")
   return "Completed"
 
 

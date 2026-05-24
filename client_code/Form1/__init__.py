@@ -19,10 +19,12 @@ class Form1(Form1Template):
 
     # Any code you write here will run before the form opens.
 
-  if 1 == 1:
-    anvil.server.call("get_id_launcher","track")
+
+  #When updating anything, sport is 'track' and 'xc', all lowercase
   if 1 == 0:
-    anvil.server.call('start_import',"xc")
+    anvil.server.call("get_id_launcher","xc")
+  if 1 == 0:
+    anvil.server.call('start_import',"track")
   if 1 == 0:
     anvil.server.call("refresh_pr")
 
