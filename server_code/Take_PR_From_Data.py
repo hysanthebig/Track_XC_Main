@@ -22,22 +22,18 @@ pd.set_option('display.max_columns',None)
 pd.set_option('display.max_rows',None)
 pd.set_option('display.width',None)
 
-def retrieve_data_from_tables(table):
-  df = pd.DataFrame(app_tables[table].search())
-  return df
-
 
 @anvil.server.callable
 def refresh_pr():
-  list_table = ["xc_table","track_table"]
-  all_df=[]
-  for table in list_table:
-    df = retrieve_data_from_tables(table)
-    for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
-      dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
-      print(dfs)
-      dfs["Team Position"] = dfs.index + 1
-      all_df.append(dfs)
+  df = pd.DataFrame(app_tables.race_data_table.search())
+
+  all_df = []
+  
+  for (year,length,gender), dfs in df.groupby(["Year","Length","Gender"]):
+    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("Runner",keep = "first").reset_index(drop = True)
+    print(dfs)
+    dfs["Team Position"] = dfs.index + 1
+    all_df.append(dfs)
       
   pr_df = pd.concat(all_df, ignore_index = True)
 
