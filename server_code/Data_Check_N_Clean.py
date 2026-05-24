@@ -3,6 +3,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 import pandas as pd
+from ServerMain import filter_df
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -16,10 +17,15 @@ import pandas as pd
 #   print("Hello, " + name + "!")
 #   return 42
 #
+distance_list = ["800 Meters","1600 Meters","3200 Meters"]
+xc_distance_list = ["2.0","3.0"]
+allowed_distances = ["800 Meters","1600 Meters","3200 Meters","2.0","3.0"]
+
+
 
 def normalize_df(df):
   df = df.sort_index(axis = 1)
-  df = df.sort_values(by = ["StudentID","Length","Year"])
+  df = df.sort_values(by = ["StudentID","Length","Year","time_seconds","Meet"])
   df = df.reset_index(drop = True)
   return df
 
@@ -51,10 +57,18 @@ def verify_pr():
   
 def clean_data(df):
   df = normalize_df(df)
+
   if df.isna().any().any():
     print(df[df.isna().any(axis = 1)])
     print("Check NAN rows")
-    return
-  df.drop_duplicates()
+
+  df = filter_df(df,lengthlist = allowed_distances)
+  df.drop_duplicates(inplace = True)
+  return df
+
+  
+def table_cleaner(table):
+  df = df = pd.DataFrame(app_tables[table].search())
+  clean_data(df)
   
   
