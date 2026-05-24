@@ -40,7 +40,7 @@ class Form1(Form1Template):
     
   if 1 == 0:
     anvil.server.call("verify_pr")
-  if 1 == 1:
+  if 1 == 0:
     anvil.server.call("copy_main_to_history")
 
 
