@@ -63,6 +63,10 @@ class Form1(Form1Template):
     rows = app_tables.all_time_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender)
     panel.items = rows
 
+  def display_race(self,panel,length,gender,year,race):
+    rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= Ra)
+    panel.items = rows
+
 
   def refresh_pr(self):
     self.all_choice_button_visible(True)
