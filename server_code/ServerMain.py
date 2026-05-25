@@ -69,3 +69,16 @@ def add_unique_rows(rows,table):
   combined = combined.drop_duplicates(keep = False, ignore_index = True)
   app_tables[table].add_rows(combined.to_dict(orient = "records"))
   print(f"Added {len(combined)} rows")
+
+@anvil.server.callable
+def get_races(sport_year_dict):
+  all_list = []
+  for sport,year in sport_year_dict:
+    df = pd.DataFrame(app_tables.race_data_table.search(q.fetch_only("Meet","Year","Sport"),Year = year,Sport = sport))
+    df = df.drop_duplicates()
+    all_list.append(df)
+  df = pd.concat(all_list,ignore_index = True)
+  app_tables.race_names_for_race_button.delete_all_rows()
+  app_tables.race_names_for_race_button.add_rows(df.to_dict(orient = "records"))
+  print("Get_Races finished")
+  

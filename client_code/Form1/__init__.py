@@ -123,21 +123,22 @@ class Form1(Form1Template):
     
     selected_gender = self.gender_button.text
     selected_sport = self.sport_button.text
+    selected_meet = self.race_button.text
     current_year = datetime.datetime.now().year()
-
+  
 
     if selected_sport == "Track":
       selected_year = current_year
-      self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year)
+      self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
     else:
-      if datetime.datetime.now().month < 6:
+      if datetime.datetime.now().month <= 7:
         selected_year = current_year-1
       else:
         selected_year = current_year
-      self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
+      self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year,meet = selected_meet)
       self.data_grid_4.visible = False
       
 
@@ -187,6 +188,13 @@ class Form1(Form1Template):
       sport_list.append(menu_item)
     self.sport_button.menu_items = sport_list   
 
+  def load_race(self,sport = None,year = 2026):
+    sport_list = []
+    for sport in [dict.fromkeys(app_tables.race_data_table.search(q.fetch_only("Meet"),Sport=sport,Year = year))]:
+      menu_item = m3.MenuItem(text = sport)
+      menu_item.set_event_handler('click',self.sport_item_click)
+      sport_list.append(menu_item)
+    self.sport_button.menu_items = sport_list   
 
 
 
@@ -232,6 +240,7 @@ class Form1(Form1Template):
     self.load_years()
     self.load_gender()
     self.load_sport()
+    self.load_race()
 
   def year_item_click(self,sender, **event_args):
     self.year_button.text = sender.text
@@ -243,6 +252,11 @@ class Form1(Form1Template):
 
   def sport_item_click(self,sender, **event_args):
     self.sport_button.text = sender.text
+    self.refresh_grids()
+    self.load_race()
+
+  def meet_item_click(self,sender, **event_args):
+    self.meet_button.text = sender.text
     self.refresh_grids()
 
   @handle("all_time_button", "click")
