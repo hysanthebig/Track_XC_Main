@@ -63,10 +63,17 @@ class Form1(Form1Template):
     rows = app_tables.all_time_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender)
     panel.items = rows
 
-  def display_race(self,panel,length,gender,year,race):
-    rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= Ra)
+  def display_race(self,panel,length,gender,year,meet):
+    rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
     panel.items = rows
 
+
+
+
+
+
+
+  
 
   def refresh_pr(self):
     self.all_choice_button_visible(True)
@@ -75,7 +82,7 @@ class Form1(Form1Template):
     selected_year = self.year_button.text
     selected_gender = self.gender_button.text
     selected_sport = self.sport_button.text
-    
+
     if selected_sport == "Track":
       self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year)
       self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year)
@@ -85,6 +92,8 @@ class Form1(Form1Template):
       self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
       self.data_grid_4.visible = False
 
+
+  
   def refresh_all_time(self):
     self.all_choice_button_visible(False)
     self.all_grids_visible(False)
@@ -104,6 +113,33 @@ class Form1(Form1Template):
       self.display_atime(panel = self.repeating_panel_5, length = "2.0",gender = selected_gender)
       self.data_grid_atime_3.visible = False
       
+
+  
+  def refresh_race(self):
+    self.all_choice_button_visible(True)
+    self.year_button.visible = False
+    self.all_grids_visible(False)
+    self.pr_dg_visible(True)
+    
+    selected_gender = self.gender_button.text
+    selected_sport = self.sport_button.text
+    if selected_sport 
+      selected_year = datetime.datetime.now().year
+
+    if selected_sport == "Track":
+      self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year)
+      self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year)
+      self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year)
+    else:
+      self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year)
+      self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
+      self.data_grid_4.visible = False
+      
+
+
+
+
+
     
   def refresh_grids(self):
     if self.PR_button.appearance == "filled":
