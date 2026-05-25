@@ -123,15 +123,19 @@ class Form1(Form1Template):
     
     selected_gender = self.gender_button.text
     selected_sport = self.sport_button.text
+    current_year = datetime.datetime.now().year()
 
 
     if selected_sport == "Track":
-      selected_year = datetime.datetime.now().year
+      selected_year = current_year
       self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year)
       self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year)
       self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year)
     else:
-      if datetime.datetime.now().month < 
+      if datetime.datetime.now().month < 6:
+        selected_year = current_year-1
+      else:
+        selected_year 
       self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year)
       self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
       self.data_grid_4.visible = False
