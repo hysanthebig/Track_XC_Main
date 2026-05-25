@@ -84,7 +84,19 @@ def clean_data(df):
   df.drop_duplicates(inplace = True)
   return df
 
+###appends unique data to table
+def add_unique_rows(rows,table):
+  previous_df = normalize_df(pd.DataFrame(app_tables[table].search()))
+  
+  if isinstance(rows,pd.DataFrame):
+    df = normalize_df(rows)
+  else:
+    df = normalize_df(pd.DataFrame(rows))
 
+  combined = pd.concat([previous_df,df])
+  combined = combined.drop_duplicates(keep = False, ignore_index = True)
+  app_tables[table].add_rows(combined)
+  
 
 
 @anvil.server.callable
