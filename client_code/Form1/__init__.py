@@ -192,15 +192,24 @@ class Form1(Form1Template):
     self.sport_button.menu_items = sport_list   
 
   def load_race(self,sport = "Track"):
+
+
     race_list = []
-    if self.meet_button.menu_items:
-      self.meet_button.menu_items = race_list
-    for race in list(app_tables.race_names_for_race_button.search(Sport=sport)):
+    for race in list(app_tables.race_names_for_race_button.search()):
       menu_item = m3.MenuItem(text = race["Meet"])
       menu_item.set_event_handler('click',self.meet_item_click)
+      menu_item.tag = race["Sport"]
+      if menu_item.tag != sport:
+        menu_item.visible = False
       race_list.append(menu_item)
-    self.meet_button.menu_items = race_list   
-
+    self.meet_button.menu_items = race_list
+    
+  def refresh_race_button(self,sport):
+    for menu_item in self.meet_button.menu_items:
+      if menu_item.tag == sport:
+        menu_item.visible = True
+      else:
+        menu_item.visible = False
 
 
 
@@ -259,9 +268,9 @@ class Form1(Form1Template):
     self.sport_button.text = sender.text
     self.refresh_grids()
     if self.sport_button.text == "Cross Country":
-      self.load_race(sport = "XC")
+      self.refresh_race_button(sport = "XC")
     else:
-      self.load_race(sport = self.sport_button.text)
+      self.refresh_race_button(sport = self.sport_button.text)
 
   def meet_item_click(self,sender, **event_args):
     self.meet_button.text = sender.text
