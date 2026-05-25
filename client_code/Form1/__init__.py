@@ -45,8 +45,11 @@ class Form1(Form1Template):
       anvil.server.call("verify_pr")
     if 1 == 0:
       anvil.server.call("copy_main_to_history")
-  
-  
+
+  #=UI CALLS====================================================================================================================
+    if 1 == 0:
+      race_dict = {"XC":2025,"Track":2026}
+      anvil.server.call('get_races',race_dict)
   #================================================================================================================================================================================================================
 
 
@@ -90,7 +93,7 @@ class Form1(Form1Template):
     else:
       self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year)
       self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
-      self.data_grid_4.visible = False
+      self.data_grid_3.visible = False
 
 
   
@@ -188,13 +191,15 @@ class Form1(Form1Template):
       sport_list.append(menu_item)
     self.sport_button.menu_items = sport_list   
 
-  def load_race(self,sport = None,year = 2026):
-    sport_list = []
-    for sport in [dict.fromkeys(app_tables.race_data_table.search(q.fetch_only("Meet"),Sport=sport,Year = year))]:
-      menu_item = m3.MenuItem(text = sport)
-      menu_item.set_event_handler('click',self.sport_item_click)
-      sport_list.append(menu_item)
-    self.sport_button.menu_items = sport_list   
+  def load_race(self,sport = "Track"):
+    race_list = []
+    if self.meet_button.menu_items:
+      self.meet_button.menu_items = race_list
+    for race in list(app_tables.race_names_for_race_button.search(Sport=sport)):
+      menu_item = m3.MenuItem(text = race["Meet"])
+      menu_item.set_event_handler('click',self.meet_item_click)
+      race_list.append(menu_item)
+    self.meet_button.menu_items = race_list   
 
 
 
@@ -253,7 +258,10 @@ class Form1(Form1Template):
   def sport_item_click(self,sender, **event_args):
     self.sport_button.text = sender.text
     self.refresh_grids()
-    self.load_race()
+    if self.sport_button.text == "Cross Country":
+      self.load_race(sport = "XC")
+    else:
+      self.load_race(sport = self.sport_button.text)
 
   def meet_item_click(self,sender, **event_args):
     self.meet_button.text = sender.text

@@ -73,8 +73,9 @@ def add_unique_rows(rows,table):
 @anvil.server.callable
 def get_races(sport_year_dict):
   all_list = []
-  for sport,year in sport_year_dict:
+  for sport,year in sport_year_dict.items():
     df = pd.DataFrame(app_tables.race_data_table.search(q.fetch_only("Meet","Year","Sport"),Year = year,Sport = sport))
+    df = df.drop(columns = ["time_seconds","Length","StudentID","School","Runner","Date","Grade","Time","Gender"])
     df = df.drop_duplicates()
     all_list.append(df)
   df = pd.concat(all_list,ignore_index = True)
