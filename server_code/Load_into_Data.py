@@ -22,6 +22,8 @@ pd.set_option('display.max_columns',None)
 pd.set_option('display.max_rows',None)
 pd.set_option('display.width',None)
 
+distance_list = ["800 Meters","1600 Meters","3200 Meters"]
+xc_distance_list = ["2.0","3.0"]
 
 @anvil.server.callable
 def refresh_pr():
@@ -37,14 +39,37 @@ def refresh_pr():
       
   pr_df = pd.concat(all_df, ignore_index = True)
 
-  if not pr_df.isna().any().any():
-    app_tables.pr_table.delete_all_rows()
-    app_tables.pr_table.add_rows(pr_df.to_dict(orient = "records"))
-    print("PR_table Updated")
-  else:
-    print("NaN value detected")
+  app_tables.pr_table.delete_all_rows()
+  app_tables.pr_table.add_rows(pr_df.to_dict(orient = "records"))
+  print("PR_table Updated")
 
-    
+
+@anvil.server.callable
+def load_all_time():
+  df = pd.DataFrame(app_tables.race_data_table.search())
+
+  all_df = []
+
+  for (length,gender), dfs in df.groupby(["Length","Gender"]):
+    dfs = dfs.sort_values(by = "time_seconds").drop_duplicates("StudentID",keep = "first").reset_index(drop = True)
+    print(dfs)
+    dfs["Coaching Year"] = [
+      f"Year {year - 2022}" for year in dfs["Year"]
+    ]
+    dfs["Team Position"] = dfs.index + 1
+    if length in distance_list:
+       dfs = dfs.head(10)
+    elif length in xc_distance_list:
+      dfs = dfs.head(20)
+      
+    all_df.append(dfs)
+
+  pr_df = pd.concat(all_df, ignore_index = True)
+
+  app_tables.all_time_table.delete_all_rows()
+  app_tables.all_time_table.add_rows(pr_df.to_dict(orient = "records"))
+  print("All_time_table Updated")
+
 
 
   

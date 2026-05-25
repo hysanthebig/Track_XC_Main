@@ -3,7 +3,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 import pandas as pd
-from ServerMain import filter_df
+import ServerMain
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -80,24 +80,9 @@ def clean_data(df):
     print(df[df.isna().any(axis = 1)])
     print("Check NAN rows")
 
-  df = filter_df(df,lengthlist = allowed_distances)
+  df = ServerMain.filter_df(df,lengthlist = allowed_distances)
   df.drop_duplicates(inplace = True)
   return df
-
-###appends unique data to table
-def add_unique_rows(rows,table):
-  previous_df = normalize_df(pd.DataFrame(app_tables[table].search()))
-  
-  if isinstance(rows,pd.DataFrame):
-    df = normalize_df(rows)
-  else:
-    df = normalize_df(pd.DataFrame(rows))
-
-  combined = pd.concat([previous_df,df])
-  combined = combined.drop_duplicates(keep = False, ignore_index = True)
-  app_tables[table].add_rows(combined)
-  
-
 
 @anvil.server.callable
 def table_cleaner(table=None,auto_df = None):
@@ -124,10 +109,7 @@ def snapshot_to_main():
 def copy_main_to_history():
   print("Adding new rows to backup")
   rowsdf = pd.DataFrame(app_tables.race_data_table.search())
-  df = pd.DataFrame(app_tables.backup_race_data.search())
-  df = pd.concat([df,rowsdf],ignore_index = True)
-  df.drop_duplicates(keep = False,inplace = True)
-  app_tables.backup_race_data.add_rows(df.to_dict(orient = "records"))
+  ServerMain.add_unique_rows(rowsdf,"backup_race_data")
   print("New rows added")
   
   

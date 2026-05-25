@@ -3,6 +3,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 import pandas as pd
+from Data_Check_N_Clean import normalize_df
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -55,3 +56,16 @@ def filter_df(df,runnerlist = None,schoollist = None,lengthlist= None,gender = N
   return(df_filtered)
 
 
+###appends unique data to table    works for now, must fix later because its inefficent.
+def add_unique_rows(rows,table):
+  previous_df = normalize_df(pd.DataFrame(app_tables[table].search()))
+
+  if isinstance(rows,pd.DataFrame):
+    df = normalize_df(rows)
+  else:
+    df = normalize_df(pd.DataFrame(rows))
+
+  combined = pd.concat([previous_df,df])
+  combined = combined.drop_duplicates(keep = False, ignore_index = True)
+  app_tables[table].add_rows(combined.to_dict(orient = "records"))
+  print(f"Added {len(combined)} rows")

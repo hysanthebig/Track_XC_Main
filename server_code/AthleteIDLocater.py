@@ -3,6 +3,7 @@ from anvil.tables import app_tables
 from curl_cffi import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
+from ServerMain import add_unique_rows
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #
@@ -95,7 +96,7 @@ def get_id_launcher():
   df = pd.DataFrame(all_records)
   df = df.drop_duplicates(subset = ["StudentID","Sport"]).reset_index(drop = True)
   to_add = df.to_dict(orient = "records")
-  app_tables.athlete_table.add_rows(to_add)
+  add_unique_rows(to_add,"athlete_table")
 
 
   print("IDs Updated")
