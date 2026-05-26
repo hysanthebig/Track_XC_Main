@@ -1,8 +1,9 @@
 components_by_slot:
   app_bar_links:
   - components:
-    - name: repeating_panel_1
-      properties: {item_template: Form1.RowTemplate2}
+    - layout_properties: {}
+      name: repeating_panel_1
+      properties: {item_template: Form1.RowTemplate2, role: null}
       type: RepeatingPanel
     layout_properties: {}
     name: data_grid_1

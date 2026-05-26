@@ -20,6 +20,7 @@ class Form1(Form1Template):
 
     self.empty_row = []
     self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters"})
+    self.rep
 
     
 
