@@ -16,6 +16,7 @@ class Form1(Form1Template):
     self.year_button.text = datetime.datetime.now().year
     self.gender_button.text = "Male"
     self.sport_button.text = "Track"
+    self.meet_button.visible = False
 
 
     
@@ -67,7 +68,7 @@ class Form1(Form1Template):
     panel.items = rows
 
   def display_race(self,panel,length,gender,year,meet):
-    rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
+    rows = app_tables.race_data_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
     panel.items = rows
 
 
@@ -79,7 +80,6 @@ class Form1(Form1Template):
   
 
   def refresh_pr(self):
-    self.all_choice_button_visible(True)
     self.all_grids_visible(False)
     self.pr_dg_visible(True)
     selected_year = self.year_button.text
@@ -126,23 +126,23 @@ class Form1(Form1Template):
     
     selected_gender = self.gender_button.text
     selected_sport = self.sport_button.text
-    selected_meet = self.race_button.text
-    current_year = datetime.datetime.now().year()
+    selected_meet = self.meet_button.text
+    current_year = datetime.datetime.now().year
   
 
     if selected_sport == "Track":
       selected_year = current_year
-      self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
-      self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
-      self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_race(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_race(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_race(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year,meet = selected_meet)
     else:
       if datetime.datetime.now().month <= 7:
         selected_year = current_year-1
       else:
         selected_year = current_year
-      self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year,meet = selected_meet)
-      self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year,meet = selected_meet)
-      self.data_grid_4.visible = False
+      self.display_race(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.display_race(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year,meet = selected_meet)
+      self.data_grid_3.visible = False
       
 
 
@@ -155,6 +155,8 @@ class Form1(Form1Template):
       self.refresh_pr()
     elif self.all_time_button.appearance == "filled":
       self.refresh_all_time()
+    elif self.race_results.appearance == "filled":
+      self.refresh_race()
 
 
 
@@ -205,11 +207,16 @@ class Form1(Form1Template):
     self.meet_button.menu_items = race_list
     
   def refresh_race_button(self,sport):
+    counta = 0
     for menu_item in self.meet_button.menu_items:
       if menu_item.tag == sport:
         menu_item.visible = True
+        if counta == 0:
+          self.meet_button.text = menu_item.text
+          counta += 1
       else:
         menu_item.visible = False
+
 
 
 
@@ -239,15 +246,12 @@ class Form1(Form1Template):
     self.gender_button.visible = boolean
     self.year_button.visible = boolean
     self.sport_button.visible = boolean
+    self.meet_button.visible = boolean
 
   def all_main_button_appearance(self,appearance):
     self.PR_button.appearance = appearance
     self.all_time_button.appearance = appearance
-    
-  
-  @handle("refresh_button", "click")
-  def refresh_button_click(self, **event):
-    self.refresh_grids()
+    self.race_results.appearance = appearance
     
   @handle("", "show")
   def form_show(self,**event_args):
@@ -255,6 +259,7 @@ class Form1(Form1Template):
     self.load_gender()
     self.load_sport()
     self.load_race()
+    self.refresh_grids()
 
   def year_item_click(self,sender, **event_args):
     self.year_button.text = sender.text
@@ -267,10 +272,11 @@ class Form1(Form1Template):
   def sport_item_click(self,sender, **event_args):
     self.sport_button.text = sender.text
     self.refresh_grids()
-    if self.sport_button.text == "Cross Country":
-      self.refresh_race_button(sport = "XC")
-    else:
-      self.refresh_race_button(sport = self.sport_button.text)
+    if self.race_results.appearance == "filled":
+      if self.sport_button.text == "Cross Country":
+        self.refresh_race_button(sport = "XC")
+      else:
+        self.refresh_race_button(sport = self.sport_button.text)
 
   def meet_item_click(self,sender, **event_args):
     self.meet_button.text = sender.text
@@ -283,11 +289,25 @@ class Form1(Form1Template):
     self.sport_button.visible = True
     self.gender_button.visible = True
     self.all_time_button.appearance = "filled"
+    self.refresh_grids()
 
   @handle("PR_button", "click")
   def PR_button_click(self, **event_args):
     self.all_main_button_appearance("outlined")
     self.all_choice_button_visible(True)
+    self.meet_button.visible = False
     self.PR_button.appearance = "filled"
+    self.refresh_grids()
 
+    
+  @handle("race_results", "click")
+  def race_results_click(self, **event_args):
+    self.all_main_button_appearance("outlined")
+    self.all_choice_button_visible(True)
+    self.race_results.appearance = "filled"
+    if self.sport_button.text == "Cross Country":
+      self.refresh_race_button(sport = "XC")
+    else:
+      self.refresh_race_button(sport = self.sport_button.text)
+    self.refresh_grids()
 
