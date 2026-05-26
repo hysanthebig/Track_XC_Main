@@ -56,8 +56,10 @@ class Form1(Form1Template):
   #================================================================================================================================================================================================================
 
   def enter_data_into_grids(self,rows,panel):
-    if len(rows) == 0:
+    if len(rows) == 0 and self.sport_button.text != "Cross Country":
       panel.items = self.empty_row
+    elif len(rows) == 0 and self.sport_button.text == "Cross Country":
+      self.hide_parent(panel)
     else:
       panel.items = rows
 
