@@ -77,7 +77,8 @@ class Form1(Form1Template):
 
   def display_race(self,panel,length,gender,year,meet):
     rows = app_tables.race_data_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
-    if 
+    self.enter_data_into_grids(rows,panel)
+    
 
 
 
