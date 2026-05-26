@@ -19,7 +19,7 @@ class Form1(Form1Template):
     self.meet_button.visible = False
 
     self.empty_row = []
-    self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters","Meet":"If in XC,i"})
+    self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters"})
 
     
 
@@ -61,7 +61,8 @@ class Form1(Form1Template):
     else:
       panel.items = rows
 
-
+  def hide_parent(self,object_to_hide):
+    object_to_hide.parent
 
 
 
