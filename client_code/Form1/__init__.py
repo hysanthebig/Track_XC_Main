@@ -62,7 +62,7 @@ class Form1(Form1Template):
       panel.items = rows
 
   def hide_parent(self,object_to_hide):
-    object_to_hide.parent
+    object_to_hide.parent.visible = False
 
 
 
@@ -77,7 +77,7 @@ class Form1(Form1Template):
 
   def display_race(self,panel,length,gender,year,meet):
     rows = app_tables.race_data_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
-    self.enter_data_into_grids(rows,panel)
+    if 
 
 
 
