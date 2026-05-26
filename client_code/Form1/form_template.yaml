@@ -155,6 +155,17 @@ components_by_slot:
     type: DataGrid
   navigation:
   - components:
+    - layout_properties: {grid_position: 'QVNHYE,PKOCYS'}
+      name: text_2
+      properties:
+        bold: true
+        italic: true
+        spacing:
+          margin: [null, null, '0', null]
+          padding: [null, null, '-10', null]
+        style: label
+        text: 'Racing Selectors:'
+      type: form:dep_lin1x4oec0ytd:_Components.Text
     - layout_properties: {full_width_row: false, grid_position: 'RAEVEX,FWNMPG'}
       name: PR_button
       properties:
@@ -191,6 +202,17 @@ components_by_slot:
     properties: {background: 'theme:Surface Container Low'}
     type: ColumnPanel
   - components:
+    - layout_properties: {width: 191.049560546875}
+      name: text_1
+      properties:
+        bold: true
+        italic: true
+        spacing:
+          margin: [null, null, '-10', null]
+          padding: [null, null, '-10', null]
+        style: label
+        text: 'Buttons:'
+      type: form:dep_lin1x4oec0ytd:_Components.Text
     - components: []
       data_bindings: []
       layout_properties: {expand: true, width: 128.688}
@@ -219,6 +241,17 @@ components_by_slot:
     properties: {}
     type: FlowPanel
   - components:
+    - layout_properties: {}
+      name: text_3
+      properties:
+        bold: true
+        italic: true
+        spacing:
+          margin: [null, null, '1', null]
+          padding: [null, null, '-10', null]
+        style: label
+        text: 'Additional Sheets:'
+      type: form:dep_lin1x4oec0ytd:_Components.Text
     - components: []
       name: link_1
       properties: {align: center, bold: true, icon: 'mi:calendar_clock', icon_color: 'theme:On Primary Container', text: Training Calendar, url: 'https://docs.google.com/spreadsheets/d/1tBHXoKl_rF9nYqfr6Bug43FmmfS6iQwb4gJPHvzxBn8/edit?usp=sharing'}

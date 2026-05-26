@@ -18,6 +18,8 @@ class Form1(Form1Template):
     self.sport_button.text = "Track"
     self.meet_button.visible = False
 
+    self.empty_row = []
+    self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters","Meet":"If in XC,i"})
 
     
 
@@ -53,6 +55,11 @@ class Form1(Form1Template):
       anvil.server.call('get_races',race_dict)
   #================================================================================================================================================================================================================
 
+  def enter_data_into_grids(self,rows,panel):
+    if len(rows) == 0:
+      panel.items = self.empty_row
+    else:
+      panel.items = rows
 
 
 
@@ -61,15 +68,15 @@ class Form1(Form1Template):
   
   def display_pr(self,panel,length,gender,year):
     rows = app_tables.pr_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year)
-    panel.items = rows
+    self.enter_data_into_grids(rows,panel)
 
   def display_atime(self,panel,length,gender):
     rows = app_tables.all_time_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender)
-    panel.items = rows
+    self.enter_data_into_grids(rows,panel)
 
   def display_race(self,panel,length,gender,year,meet):
     rows = app_tables.race_data_table.search(tables.order_by("time_seconds"),Length=length,Gender=gender,Year=year,Meet= meet)
-    panel.items = rows
+    self.enter_data_into_grids(rows,panel)
 
 
 
