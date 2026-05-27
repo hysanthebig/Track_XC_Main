@@ -4,6 +4,19 @@
 
 .anvil-role-wide .anvil-data-row-panel {
   flex-wrap: nowrap;
+  min-width: 1000px;
+}
+.anvil-role-wide .anvil-data-grid {
+  min-width: 1000px
+}
+
+.anvil-container-overflow {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.anvil-role-wide-dg .anvil-panel-section-gutter {
+  flex-wrap: wrap;
   min-width: -moz-min-content;
   min-width: min-content;
 }
