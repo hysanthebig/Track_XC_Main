@@ -20,8 +20,14 @@ class Form1(Form1Template):
 
     self.empty_row = []
     self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters"})
-    self.rep
+    self.data_grid_1.role = "wide"
+    self.data_grid_2.role = "wide"
+    self.data_grid_3.role = "wide"
+    self.data_grid_atime_1.role = "wide"
+    self.data_grid_atime_2.role = "wide"
+    self.data_grid_atime_3.role = "wide"
 
+      
     
 
     # Any code you write here will run before the form opens.
