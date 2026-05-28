@@ -13,26 +13,6 @@ components_by_slot:
   app_bar_title: []
   content:
   - components:
-    - name: repeating_panel_4
-      properties: {item_template: Form1.RowTemplate2}
-      type: RepeatingPanel
-    layout_properties: {}
-    name: data_grid_atime_1
-    properties:
-      columns:
-      - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
-      - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
-      - {data_key: Time, id: OMVYVW, title: Time, width: '100'}
-      - {data_key: Grade, expand: false, id: NICYZK, title: Grade, width: '75'}
-      - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 232.6666259765625}
-      - {data_key: Date, id: ZKYZCW, title: Date, width: '75'}
-      - {data_key: Length, id: QIWBAG, title: Length, width: '100'}
-      - {data_key: School, id: SIODSY, title: School, width: '100'}
-      - {data_key: Coaching Year, expand: false, id: EFFNRS, title: Coaching Year, width: '75'}
-      rows_per_page: 100
-      visible: false
-    type: DataGrid
-  - components:
     - components: []
       layout_properties: {}
       name: column_panel_5
@@ -58,6 +38,27 @@ components_by_slot:
         role: null
         rows_per_page: 100
         show_page_controls: false
+      type: DataGrid
+    - components:
+      - name: repeating_panel_4
+        properties: {item_template: Form1.RowTemplate2}
+        type: RepeatingPanel
+      layout_properties: {}
+      name: data_grid_atime_1
+      properties:
+        columns:
+        - {data_key: Team Position, expand: false, id: KRPUIY, title: Team Position, width: 77.44439697265625}
+        - {data_key: Runner, expand: false, id: VYFUCS, title: Runner, width: 173.7777099609375}
+        - {data_key: Time, id: OMVYVW, title: Time, width: '100'}
+        - {data_key: Grade, expand: false, id: NICYZK, title: Grade}
+        - {data_key: Meet, expand: false, id: HVFMGP, title: Meet, width: 232.6666259765625}
+        - {data_key: Date, expand: false, id: ZKYZCW, title: Date, width: '75'}
+        - {data_key: Length, id: QIWBAG, title: Length, width: '100'}
+        - {data_key: School, id: SIODSY, title: School, width: '100'}
+        - {data_key: Coaching Year, expand: false, id: EFFNRS, title: Coaching Year, width: '75'}
+        rows_per_page: 100
+        show_page_controls: false
+        visible: false
       type: DataGrid
     layout_properties: {}
     name: flow_panel_1
@@ -87,6 +88,7 @@ components_by_slot:
         - {data_key: School, expand: false, id: SIODSY, title: School, width: '100'}
         role: null
         rows_per_page: 100
+        show_page_controls: false
       type: DataGrid
     - components:
       - name: repeating_panel_5
@@ -106,6 +108,7 @@ components_by_slot:
         - {data_key: School, id: SIODSY, title: School, width: '100'}
         - {data_key: Coaching Year, expand: false, id: EFFNRS, title: Coaching Year, width: '75'}
         rows_per_page: 100
+        show_page_controls: false
         visible: false
       type: DataGrid
     layout_properties: {}
@@ -136,6 +139,7 @@ components_by_slot:
         - {data_key: School, expand: false, id: SIODSY, title: School, width: '100'}
         role: null
         rows_per_page: 100
+        show_page_controls: false
       type: DataGrid
     - components:
       - name: repeating_panel_6
@@ -155,6 +159,7 @@ components_by_slot:
         - {data_key: School, id: SIODSY, title: School, width: '100'}
         - {data_key: Coaching Year, expand: false, id: EFFNRS, title: Coaching Year, width: '75'}
         rows_per_page: 100
+        show_page_controls: false
         visible: false
       type: DataGrid
     layout_properties: {}
