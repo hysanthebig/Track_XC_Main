@@ -28,7 +28,8 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
       
-    
+    if 1 == 1:
+      anvil.server.call('average_time',["Male"],["1600 Meters"],[9])
 
     # Any code you write here will run before the form opens.
 
