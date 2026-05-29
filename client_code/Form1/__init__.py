@@ -29,7 +29,7 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
       
-    if 1 == 1:
+    if 1 == 0:
       self.plot_1.figure = anvil.server.call('average_time',["Female"],["1600 Meters"],[9,10,11,12],"Scatter")
 
     # Any code you write here will run before the form opens.
