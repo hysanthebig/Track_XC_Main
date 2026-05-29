@@ -19,6 +19,7 @@ class Form1(Form1Template):
     self.sport_button.text = "Track"
     self.meet_button.visible = False
     self.grade_button.text = "All Grades"
+    self.length_button.text = "1600 Meters"
 
     self.empty_row = []
     self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters"})
@@ -391,7 +392,9 @@ class Form1(Form1Template):
   def PR_button_click(self, **event_args):
     self.all_main_button_appearance("outlined")
     self.all_choice_button_visible(True)
+    self.grade_button.visible = False
     self.meet_button.visible = False
+    self.length_button.visible = False
     self.PR_button.appearance = "filled"
     self.refresh_grids()
 
@@ -400,6 +403,8 @@ class Form1(Form1Template):
   def race_results_click(self, **event_args):
     self.all_main_button_appearance("outlined")
     self.all_choice_button_visible(True)
+    self.length_button.visible = False
+    self.grade_button.visible = False
     self.race_results.appearance = "filled"
     if self.sport_button.text == "Cross Country":
       self.refresh_race_button(sport = "XC")
