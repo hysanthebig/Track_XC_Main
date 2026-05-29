@@ -329,6 +329,7 @@ class Form1(Form1Template):
     self.PR_button.appearance = appearance
     self.all_time_button.appearance = appearance
     self.race_results.appearance = appearance
+    self.functions_menus.appearance = appearance
     
   @handle("", "show")
   def form_show(self,**event_args):
