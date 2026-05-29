@@ -17,17 +17,58 @@ import plotly.express as px
 #   print("Hello, " + name + "!")
 #   return 42
 #
+def time_to_seconds(time_str):
+  try:
+    if float(time_str) < 60:
+      return float(time_str)
+  except:
+    try:
+      minutes, seconds = time_str.split(":")
+      return int(minutes) * 60 + float(seconds)
+    except:
+      return None
+
+
+
+
+
 @anvil.server.callable
-def average_time(gender,length,grade):
+def average_time(gender,length,grade,plottype = "Line"):
   print("loaded")
-  df = pd.DataFrame(app_tables.race_data_table.search(
+  df = pd.DataFrame(app_tables.pr_table.search(
     Gender = q.any_of(*gender),
     Length = q.any_of(*length),
     Grade = q.any_of(*grade)
   ))
+
+  if plottype == "Line":
+    averaged_df = df.groupby(["Year","Length"])["time_seconds"].agg("mean").reset_index()
+    
+    figure = px.line(averaged_df, x = 'Year', y = "time_seconds",
+                    color = "Length",
+                    title = "Average Times",
+                    labels = {
+                      "time_seconds":"Time"
+                    })
   
-  averaged_df = df.groupby(["Year","Length"])["time_seconds"].agg("mean").reset_index()
-  figure = px.line(averaged_df, x = 'Year', y = "timne_seconds", title = "Average Times")
-  return(figure)
+    figure.update_yaxes(tickvals = averaged_df["time_seconds"],
+                        ticktext = [f"{round(s//60)}:{round(s%60,2)}" for s in averaged_df['time_seconds']])
+  
+    return(figure)
+
+  else:
+    sorted_df = df.sort_values(by = ["Year","Length"])
+
+    figure = px.scatter(sorted_df, x = 'Year', y = "time_seconds",
+                     trendline = "ols",
+                     title = "Times by Year",
+                     labels = {
+                       "time_seconds":"Time"
+                     })
+
+    figure.update_yaxes(tickvals = sorted_df["time_seconds"],
+                        ticktext = [f"{round(s//60)}:{round(s%60,2)}" for s in sorted_df['time_seconds']])
+
+    return figure
   
 
