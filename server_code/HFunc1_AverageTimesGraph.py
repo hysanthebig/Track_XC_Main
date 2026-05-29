@@ -67,7 +67,7 @@ def average_time(gender,length,grade,plottype = "Line"):
                      })
 
     figure.update_yaxes(tickvals = sorted_df["time_seconds"],
-                        ticktext = [f"{round(s//60)}:{round(s%60,2)}" for s in sorted_df['time_seconds']])
+                        ticktext = [f"{int(s//60)}:{int(s%60):02d}" for s in sorted_df['time_seconds']])
 
     return figure
   

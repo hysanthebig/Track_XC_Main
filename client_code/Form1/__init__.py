@@ -30,7 +30,7 @@ class Form1(Form1Template):
 
       
     if 1 == 1:
-      self.plot_1.figure = anvil.server.call('average_time',["Male"],["1600 Meters"],[9],"Scatter")
+      self.plot_1.figure = anvil.server.call('average_time',["Female"],["1600 Meters"],[9,10,11,12],"Scatter")
 
     # Any code you write here will run before the form opens.
 
