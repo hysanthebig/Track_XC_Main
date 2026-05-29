@@ -28,7 +28,17 @@ class Form1(Form1Template):
     self.data_grid_atime_2.role = "wide"
     self.data_grid_atime_3.role = "wide"
 
-      
+    function_list = []
+    for function in ["Average Times Graphs"]:
+      menu_item = m3.MenuItem(text = function)
+      menu_item.set_event_handler('click',self.additional_item_click)
+      function_list.append(menu_item)
+    self.functions_menus.menu_items = function_list   
+
+
+
+
+    
     if 1 == 0:
       self.plot_1.figure = anvil.server.call('average_time',["Female"],["1600 Meters"],[9,10,11,12],"Scatter")
 
@@ -240,6 +250,7 @@ class Form1(Form1Template):
 
 
 
+
 #########################################________________________________________________________________________
 #Buttons
 #################################################________________________________________________________________________
@@ -331,3 +342,9 @@ class Form1(Form1Template):
       self.refresh_race_button(sport = self.sport_button.text)
     self.refresh_grids()
 
+
+  def additional_item_click(self,sender, **event_args):
+    self.all_main_button_appearance("outlined")
+    self.all_choice_button_visible(True)
+    self.functions_menus.appearance = "filled"
+    self.functions_menus.text = sender.text
