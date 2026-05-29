@@ -181,7 +181,7 @@ class Form1(Form1Template):
     selected_length = self.length_button.text
     selected_grade = self.grade_button.text
 
-    self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],[selected_grade],plottype = "Scatter")
+    self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],selected_grade,plottype = "Scatter")
 
 
 

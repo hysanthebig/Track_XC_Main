@@ -36,7 +36,7 @@ def time_to_seconds(time_str):
 def average_time(gender,length,grade,plottype = "Line"):
   print("loaded")
   
-  if "All Grades" in grade:
+  if "All Grades" == grade:
     grade = [9,10,11,12]
   else:
     grade = [grade]
