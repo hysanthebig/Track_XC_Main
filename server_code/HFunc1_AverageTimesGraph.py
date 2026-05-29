@@ -35,6 +35,12 @@ def time_to_seconds(time_str):
 @anvil.server.callable
 def average_time(gender,length,grade,plottype = "Line"):
   print("loaded")
+  
+  if "All Grades" in grade:
+    grade = [9,10,11,12]
+  else:
+    grade = [grade]
+    
   df = pd.DataFrame(app_tables.pr_table.search(
     Gender = q.any_of(*gender),
     Length = q.any_of(*length),

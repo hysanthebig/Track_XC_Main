@@ -18,6 +18,7 @@ class Form1(Form1Template):
     self.gender_button.text = "Male"
     self.sport_button.text = "Track"
     self.meet_button.visible = False
+    self.grade_button.text = "All Grades"
 
     self.empty_row = []
     self.empty_row.append({"Team Position":0, "Runner":"No runners matching these filters"})
@@ -35,7 +36,7 @@ class Form1(Form1Template):
       function_list.append(menu_item)
     self.functions_menus.menu_items = function_list   
 
-
+    
 
 
     
@@ -174,7 +175,13 @@ class Form1(Form1Template):
       self.display_race(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year,meet = selected_meet)
       self.data_grid_3.visible = False
       
+  def graph_average_times(self):
 
+    selected_gender = self.gender_button.text
+    selected_length = self.length_button.text
+    selected_grade = self.grade_button.text
+
+    self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],[selected_grade],plottype = "Scatter")
 
 
 
@@ -187,6 +194,9 @@ class Form1(Form1Template):
       self.refresh_all_time()
     elif self.race_results.appearance == "filled":
       self.refresh_race()
+    elif self.functions_menus.appearance == "filled":
+      if self.functions_menus.text == "Average Times Graphs":
+        self.graph_average_times()
 
 
 
@@ -223,9 +233,17 @@ class Form1(Form1Template):
       sport_list.append(menu_item)
     self.sport_button.menu_items = sport_list   
 
+  def load_grade(self):
+    grade_list = []
+    for grade in ["All Grades",9,10,11,12]:
+      menu_item = m3.MenuItem(text = grade)
+      menu_item.set_event_handler('click',self.grade_item_click)
+      grade_list.append(menu_item)
+    self.grade_button.menu_items = grade_list   
+
+  
   def load_race(self,sport = "Track"):
-
-
+    
     race_list = []
     for race in list(app_tables.race_names_for_race_button.search()):
       menu_item = m3.MenuItem(text = race["Meet"])
@@ -248,6 +266,32 @@ class Form1(Form1Template):
         menu_item.visible = False
 
 
+  
+  def load_events(self,sport = "Track"):
+
+    length_list = []
+    length_dict = {"1600 Meters":"Track","800 Meters":"Track","3200 Meters":"Track","3.0":"XC","2.0":"XC"}
+    for length in length_dict:
+      menu_item = m3.MenuItem(text = length)
+      menu_item.set_event_handler('click',self.length_item_click)
+      menu_item.tag = length_dict[length]
+      if menu_item.tag != sport:
+        menu_item.visible = False
+      length_list.append(menu_item)
+    self.length_button.menu_items = length_list
+
+    
+  def refresh_length_button(self,sport):
+    counta = 0
+    for menu_item in self.length_button.menu_items:
+      if menu_item.tag == sport:
+        menu_item.visible = True
+        if counta == 0:
+          self.length_button.text = menu_item.text
+          counta += 1
+      else:
+        menu_item.visible = False
+    
 
 
 
@@ -278,6 +322,8 @@ class Form1(Form1Template):
     self.year_button.visible = boolean
     self.sport_button.visible = boolean
     self.meet_button.visible = boolean
+    self.grade_button.visible = boolean
+    self.length_button.visible = boolean
 
   def all_main_button_appearance(self,appearance):
     self.PR_button.appearance = appearance
@@ -290,6 +336,8 @@ class Form1(Form1Template):
     self.load_gender()
     self.load_sport()
     self.load_race()
+    self.load_grade()
+    self.load_events()
     self.refresh_grids()
 
   def year_item_click(self,sender, **event_args):
@@ -300,6 +348,11 @@ class Form1(Form1Template):
     self.gender_button.text = sender.text
     self.refresh_grids()
 
+
+  def grade_item_click(self,sender, **event_args):
+    self.grade_button.text = sender.text
+    self.refresh_grids()
+    
   def sport_item_click(self,sender, **event_args):
     self.sport_button.text = sender.text
     self.refresh_grids()
@@ -308,7 +361,17 @@ class Form1(Form1Template):
         self.refresh_race_button(sport = "XC")
       else:
         self.refresh_race_button(sport = self.sport_button.text)
+    elif self.functions_menus.appearance == "filled":
+      if self.sport_button.text == "Cross Country":
+        self.refresh_length_button(sport = "XC")
+      else:
+        self.refresh_length_button(sport = self.sport_button.text)
+        
+  def length_item_click(self,sender, **event_args):
+    self.length_button.text = sender.text
+    self.refresh_grids()
 
+        
   def meet_item_click(self,sender, **event_args):
     self.meet_button.text = sender.text
     self.refresh_grids()
@@ -346,5 +409,10 @@ class Form1(Form1Template):
   def additional_item_click(self,sender, **event_args):
     self.all_main_button_appearance("outlined")
     self.all_choice_button_visible(True)
+    self.year_button.visible = False
+    self.meet_button.visible = False
+    self.all_grids_visible(False)
+    self.plot_1.visible = True
     self.functions_menus.appearance = "filled"
     self.functions_menus.text = sender.text
+
