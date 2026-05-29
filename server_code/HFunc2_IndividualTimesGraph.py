@@ -66,7 +66,7 @@ def individual_graph(runner,length,grade):
   tickvals, ticktext = get_tickvals(sorted_df)
 
   figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
-  figure.update_xaxes(tickformat = "")
+  figure.update_xaxes(tickformat = "%b %Y")
 
   return(figure)
 
