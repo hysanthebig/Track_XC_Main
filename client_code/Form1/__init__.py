@@ -30,7 +30,7 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
     function_list = []
-    for function in ["Average Times Graphs"]:
+    for function in ["Average Team Times","Average Team Times Scatter Graph"]:
       menu_item = m3.MenuItem(text = function)
       menu_item.set_event_handler('click',self.additional_item_click)
       function_list.append(menu_item)
@@ -40,8 +40,8 @@ class Form1(Form1Template):
 
 
     
-    if 1 == 0:
-      self.plot_1.figure = anvil.server.call('average_time',["Female"],["1600 Meters"],[9,10,11,12],"Scatter")
+    if 1 == 1:
+      self.plot_1.figure = anvil.server.call('individual_graph',"Aaron Alexander",["1600 Meters"],"All Grades")
 
     # Any code you write here will run before the form opens.
 
@@ -175,13 +175,13 @@ class Form1(Form1Template):
       self.display_race(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year,meet = selected_meet)
       self.data_grid_3.visible = False
       
-  def graph_average_times(self):
+  def graph_average_times(self,type):
 
     selected_gender = self.gender_button.text
     selected_length = self.length_button.text
     selected_grade = self.grade_button.text
 
-    self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],selected_grade,plottype = "Scatter")
+    self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],selected_grade,plottype = type)
 
 
 
@@ -195,8 +195,10 @@ class Form1(Form1Template):
     elif self.race_results.appearance == "filled":
       self.refresh_race()
     elif self.functions_menus.appearance == "filled":
-      if self.functions_menus.text == "Average Times Graphs":
-        self.graph_average_times()
+      if self.functions_menus.text == "Average Team Times":
+        self.graph_average_times("Line")
+      elif self.functions_menus.text == "Average Team Times Scatter Graph":
+        self.graph_average_times("Scatter")
 
 
 

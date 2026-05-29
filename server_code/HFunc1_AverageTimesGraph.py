@@ -4,6 +4,7 @@ from anvil.tables import app_tables
 import anvil.server
 import pandas as pd
 import plotly.express as px
+from ServerMain import get_tickvals
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -49,32 +50,47 @@ def average_time(gender,length,grade,plottype = "Line"):
 
   if plottype == "Line":
     averaged_df = df.groupby(["Year","Length"])["time_seconds"].agg("mean").reset_index()
+
+    averaged_df["time_display"] = averaged_df["time_seconds"].apply(lambda s:f"{int(s//60)}:{int(s%60):02d}")
     
     figure = px.line(averaged_df, x = 'Year', y = "time_seconds",
                     color = "Length",
                     title = "Average Times",
                     labels = {
                       "time_seconds":"Time"
-                    })
-  
-    figure.update_yaxes(tickvals = averaged_df["time_seconds"],
-                        ticktext = [f"{round(s//60)}:{round(s%60,2)}" for s in averaged_df['time_seconds']])
+                    },
+                    hover_data = {"time_display":True,"time_seconds":False})
+
+
+
+    tickvals, ticktext = get_tickvals(averaged_df)
+    
+    figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
   
     return(figure)
 
   else:
     sorted_df = df.sort_values(by = ["Year","Length"])
 
+    sorted_df["time_display"] = sorted_df["time_seconds"].apply(lambda s:f"{int(s//60)}:{int(s%60):02d}")
+
     figure = px.scatter(sorted_df, x = 'Year', y = "time_seconds",
                      trendline = "ols",
                      title = "Times by Year",
                      labels = {
                        "time_seconds":"Time"
-                     })
+                     },
+                      hover_data = {"time_display":True,"time_seconds":False})
 
-    figure.update_yaxes(tickvals = sorted_df["time_seconds"],
-                        ticktext = [f"{int(s//60)}:{int(s%60):02d}" for s in sorted_df['time_seconds']])
+    tickvals, ticktext = get_tickvals(sorted_df)
+    
+    figure.update_yaxes(tickvals = tickvals,
+                        ticktext = ticktext)
 
+    
+
+    
+    
     return figure
   
 
