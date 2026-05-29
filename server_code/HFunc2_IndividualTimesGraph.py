@@ -42,7 +42,7 @@ def individual_graph(runner,length,grade):
   else:
     grade = [grade]
 
-  df = pd.DataFrame(app_tables.pr_table.search(
+  df = pd.DataFrame(app_tables.race_data_table.search(
     Runner = q.any_of(runner),
     Length = q.any_of(*length),
     Grade = q.any_of(*grade)
@@ -50,11 +50,12 @@ def individual_graph(runner,length,grade):
 
 
   sorted_df = df.sort_values(by = ["Runner","Length"])
+  sorted_df = sorted_df.sort_values("Date")
   
   sorted_df["time_display"] = sorted_df["time_seconds"].apply(lambda s:f"{int(s//60)}:{int(s%60):02d}")
-  sorted_df["date_dt"] = pd.to_datetime(df["Date"])
+
   
-  figure = px.line(sorted_df, x = 'date_dt', y = "time_seconds",
+  figure = px.line(sorted_df, x = 'Date', y = "time_seconds",
                      color = "Length",
                      title = "Average Times",
                      labels = {
@@ -63,10 +64,10 @@ def individual_graph(runner,length,grade):
                      hover_data = {"time_display":True,"time_seconds":False})
 
 
-  tickvals, ticktext = get_tickvals(sorted_df)
+  tickvals, ticktext = get_tickvals(sorted_df,10)
 
   figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
-  figure.update_xaxes(tickformat = "%b %Y")
+  figure.update_xaxes(tickformat = "%Y-%m-%d")
 
   return(figure)
 

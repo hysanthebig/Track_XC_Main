@@ -40,8 +40,8 @@ class Form1(Form1Template):
 
 
     
-    if 1 == 1:
-      self.plot_1.figure = anvil.server.call('individual_graph',"Aaron Alexander",["1600 Meters"],"All Grades")
+    if 1 == 0:
+      self.plot_1.figure = anvil.server.call('individual_graph',"Alana Macias",["1600 Meters"],"All Grades")
 
     # Any code you write here will run before the form opens.
 

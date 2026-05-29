@@ -63,7 +63,7 @@ def average_time(gender,length,grade,plottype = "Line"):
 
 
 
-    tickvals, ticktext = get_tickvals(averaged_df)
+    tickvals, ticktext = get_tickvals(averaged_df,15)
     
     figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
   
@@ -82,7 +82,7 @@ def average_time(gender,length,grade,plottype = "Line"):
                      },
                       hover_data = {"time_display":True,"time_seconds":False})
 
-    tickvals, ticktext = get_tickvals(sorted_df)
+    tickvals, ticktext = get_tickvals(sorted_df,30)
     
     figure.update_yaxes(tickvals = tickvals,
                         ticktext = ticktext)

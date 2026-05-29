@@ -84,11 +84,11 @@ def get_races(sport_year_dict):
   app_tables.race_names_for_race_button.add_rows(df.to_dict(orient = "records"))
   print("Get_Races finished")
 
-def get_tickvals(df):
+def get_tickvals(df,by):
   min_time = df['time_seconds'].min()
   max_time = df['time_seconds'].max()
 
-  tickvals = list(range(int(min_time // 30)*30,int(max_time//30 +1)*30,30))
+  tickvals = list(range(int(min_time // by)*by,int(max_time//by +1)*by,by))
   ticktext = [f"{t//60}:{t%60:02d}" for t in tickvals]
 
   return tickvals,ticktext
