@@ -30,9 +30,9 @@ dependencies:
   resolution_hints: {app_id: 4UK6WHQ6UX7AKELK, name: Material 3 Theme, package_name: m3}
   version: {version_tag: v1.2.6}
 metadata: {logo_img: 'asset:IMG_4799.png', title: Colony Distance}
-name: xc_main
+name: Colony Distance
 native_deps: null
-package_name: xc_main
+package_name: Colony_Distance
 runtime_options:
   client_version: '3'
   server_spec: {base: python310-standard}
