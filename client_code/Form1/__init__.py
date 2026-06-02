@@ -151,7 +151,8 @@ class Form1(Form1Template):
 
   
   def refresh_race(self):
-
+    self.all_grids_visible(True)
+    self.atime_dg_visible(False)
     
     selected_gender = self.gender_button.text
     selected_sport = self.sport_button.text
