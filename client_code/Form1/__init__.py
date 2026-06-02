@@ -31,7 +31,7 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
     function_list = []
-    for function in ["Average Team Times","Average Team Times Scatter Graph","Runner's Graph"]:
+    for function in ["Average Team Times","Average Team Times Scatter Graph"]:
       menu_item = m3.MenuItem(text = function)
       menu_item.set_event_handler('click',self.additional_item_click)
       function_list.append(menu_item)
