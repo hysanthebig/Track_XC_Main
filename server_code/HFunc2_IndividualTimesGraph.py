@@ -67,7 +67,7 @@ def individual_graph(runner,length,grade):
   tickvals, ticktext = get_tickvals(sorted_df,10)
 
   figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
-  figure.update_xaxes(tickformat = "%Y-%m-%d")
+  figure.update_xaxes(tickformat = "%Y-%m-%d", type = "category")
 
   return(figure)
 

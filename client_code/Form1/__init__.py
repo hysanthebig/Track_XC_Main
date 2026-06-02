@@ -31,7 +31,7 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
     function_list = []
-    for function in ["Average Team Times","Average Team Times Scatter Graph"]:
+    for function in ["Average Team Times","Average Team Times Scatter Graph","Runner's Graph"]:
       menu_item = m3.MenuItem(text = function)
       menu_item.set_event_handler('click',self.additional_item_click)
       function_list.append(menu_item)
@@ -42,7 +42,7 @@ class Form1(Form1Template):
 
     
     if 1 == 0:
-      self.plot_1.figure = anvil.server.call('individual_graph',"Alana Macias",["1600 Meters"],"All Grades")
+      self.plot_1.figure = anvil.server.call('individual_graph',"Natalie Perez",["1600 Meters"],"All Grades")
 
     # Any code you write here will run before the form opens.
 
@@ -182,7 +182,12 @@ class Form1(Form1Template):
 
     self.plot_1.figure = anvil.server.call('average_time',[selected_gender],[selected_length],selected_grade,plottype = type)
 
+  def graph_indi_times(self):
+    selected_length = self.length_button.text
+    selected_grade = self.grade_button.text
+    selected_runner = self.runner_button.text
 
+    self.plot_1.figure = anvil.server.call("individual_graph",selected_runner,selected_length,selected_grade)
 
 
     
