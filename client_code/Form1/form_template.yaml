@@ -237,7 +237,7 @@ components_by_slot:
           margin: [null, null, '-10', null]
           padding: [null, null, '-10', null]
         style: label
-        text: 'Buttons:'
+        text: 'Dropdowns:'
       type: form:dep_lin1x4oec0ytd:_Components.Text
     - components: []
       data_bindings: []
