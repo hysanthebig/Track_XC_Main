@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.express as px
 from ServerMain import get_tickvals
 
+
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 #
@@ -71,7 +72,8 @@ def individual_graph(runner,length,grade):
   
     return(figure)
   else:
-    anvil.alert("")
+    return None
+    
 
 
 

@@ -187,8 +187,11 @@ class Form1(Form1Template):
     selected_grade = self.grade_button.text
     selected_runner = self.text_box_1.text
 
-    self.plot_1.figure = anvil.server.call("individual_graph",selected_runner,selected_length,selected_grade)
-
+    graph = anvil.server.call("individual_graph",selected_runner,selected_length,selected_grade)
+    if graph is None:
+      anvil.alert("Empty Data: Runner name in text box MUST be EXACTLY the same as on Athletic.Net, sorry", title="Error Occured")
+    else:
+      self.plot_1.figure = graph
 
     
   def refresh_grids(self):
