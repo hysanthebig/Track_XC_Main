@@ -9,6 +9,8 @@ import m3.components as m3
 import time
 import datetime
 
+track_events = ["800 Meters","1600 Meters", "3200 Meters"]
+xc_events = ["2.0","3.0"]
 
 class Form1(Form1Template):
   def __init__(self, **properties):
@@ -37,8 +39,14 @@ class Form1(Form1Template):
       function_list.append(menu_item)
     self.functions_menus.menu_items = function_list   
 
-    
+    self.panel_dict = {"800 Meters":self.repeating_panel_1,
+                       "1600 Meters":self.repeating_panel_2,
+                       "3200 Meters":self.repeating_panel_3,
+                       "2.0":self.repeating_panel_1,
+                       "3.0":self.repeating_panel_2,
+                      }
 
+  
 
     
     if 1 == 0:
@@ -119,15 +127,16 @@ class Form1(Form1Template):
     selected_sport = self.sport_button.text
 
     if selected_sport == "Track":
-      self.display_pr(panel = self.repeating_panel_1, length = "800 Meters",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_2, length = "1600 Meters",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_3, length = "3200 Meters",gender = selected_gender,year = selected_year)
+      for lengths,length_panel in self.panel_dict.items():
+        if lengths in track_events:
+          self.display_pr(panel = length_panel,length = lengths,gender = selected_gender,year = selected_year)
+          
     else:
-      self.display_pr(panel = self.repeating_panel_1, length = "3.0",gender = selected_gender,year = selected_year)
-      self.display_pr(panel = self.repeating_panel_2, length = "2.0",gender = selected_gender,year = selected_year)
+      for lengths,length_panel in self.panel_dict.items():
+        if lengths in xc_events:
+          self.display_pr(panel = length_panel,length = lengths,gender = selected_gender,year = selected_year)
       self.data_grid_3.visible = False
-
-
+    
   
   def refresh_all_time(self):
     self.all_choice_button_visible(False)
