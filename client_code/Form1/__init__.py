@@ -436,4 +436,5 @@ class Form1(Form1Template):
     self.functions_menus.text = sender.text
     if sender.text != "Individual Graph":
       self.text_box_1.visible = False
+      self.gender_button.visible = False
 
