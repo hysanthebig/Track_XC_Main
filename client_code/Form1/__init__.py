@@ -31,7 +31,7 @@ class Form1(Form1Template):
     self.data_grid_atime_3.role = "wide"
 
     function_list = []
-    for function in ["Average Team Times","Average Team Times Scatter Graph"]:
+    for function in ["Average Team Times","Average Team Times Scatter Graph","Individual Graph"]:
       menu_item = m3.MenuItem(text = function)
       menu_item.set_event_handler('click',self.additional_item_click)
       function_list.append(menu_item)
@@ -185,7 +185,7 @@ class Form1(Form1Template):
   def graph_indi_times(self):
     selected_length = self.length_button.text
     selected_grade = self.grade_button.text
-    selected_runner = self.runner_button.text
+    selected_runner = self.text_box_1.text
 
     self.plot_1.figure = anvil.server.call("individual_graph",selected_runner,selected_length,selected_grade)
 
@@ -203,6 +203,8 @@ class Form1(Form1Template):
         self.graph_average_times("Line")
       elif self.functions_menus.text == "Average Team Times Scatter Graph":
         self.graph_average_times("Scatter")
+      elif self.functions_menus.text == "Individual Graph":
+        self.graph_indi_times()
 
 
 
@@ -330,6 +332,7 @@ class Form1(Form1Template):
     self.meet_button.visible = boolean
     self.grade_button.visible = boolean
     self.length_button.visible = boolean
+    self.text_box_1.visible = boolean
 
   def all_main_button_appearance(self,appearance):
     self.PR_button.appearance = appearance
@@ -399,6 +402,7 @@ class Form1(Form1Template):
     self.grade_button.visible = False
     self.meet_button.visible = False
     self.length_button.visible = False
+    self.text_box_1.visible = False
     self.PR_button.appearance = "filled"
     self.refresh_grids()
 
@@ -409,6 +413,7 @@ class Form1(Form1Template):
     self.all_choice_button_visible(True)
     self.length_button.visible = False
     self.grade_button.visible = False
+    self.text_box_1.visible = False
     self.race_results.appearance = "filled"
     if self.sport_button.text == "Cross Country":
       self.refresh_race_button(sport = "XC")
@@ -426,4 +431,6 @@ class Form1(Form1Template):
     self.plot_1.visible = True
     self.functions_menus.appearance = "filled"
     self.functions_menus.text = sender.text
+    if sender.text != "Individual Graph":
+      self.text_box_1.visible = False
 

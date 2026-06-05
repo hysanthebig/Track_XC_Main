@@ -1,5 +1,3 @@
-import anvil.google.auth, anvil.google.drive, anvil.google.mail
-from anvil.google.drive import app_files
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
@@ -46,32 +44,34 @@ def individual_graph(runner,length,grade):
 
   df = pd.DataFrame(app_tables.race_data_table.search(
     Runner = q.any_of(runner),
-    Length = q.any_of(*length),
+    Length = length,
     Grade = q.any_of(*grade)
   ))
 
-
-  sorted_df = df.sort_values(by = ["Runner","Length"])
-  sorted_df = sorted_df.sort_values("Date")
+  if len(df) >= 1:
+    sorted_df = df.sort_values(by = ["Runner","Length"])
+    sorted_df = sorted_df.sort_values("Date")
+    
+    sorted_df["time_display"] = sorted_df["time_seconds"].apply(lambda s:f"{int(s//60)}:{int(s%60):02d}")
   
-  sorted_df["time_display"] = sorted_df["time_seconds"].apply(lambda s:f"{int(s//60)}:{int(s%60):02d}")
-
+    
+    figure = px.line(sorted_df, x = 'Date', y = "time_seconds",
+                      color = "Length",
+                      title = "Average Times",
+                      labels = {
+                        "time_seconds":"Time"
+                      },
+                      hover_data = {"time_display":True,"time_seconds":False})
   
-  figure = px.line(sorted_df, x = 'Date', y = "time_seconds",
-                     color = "Length",
-                     title = "Average Times",
-                     labels = {
-                       "time_seconds":"Time"
-                     },
-                     hover_data = {"time_display":True,"time_seconds":False})
-
-
-  tickvals, ticktext = get_tickvals(sorted_df,10)
-
-  figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
-  figure.update_xaxes(tickformat = "%Y-%m-%d", type = "category")
-
-  return(figure)
+  
+    tickvals, ticktext = get_tickvals(sorted_df,10)
+  
+    figure.update_yaxes(tickvals = tickvals,ticktext = ticktext)
+    figure.update_xaxes(tickformat = "%Y-%m-%d", type = "category")
+  
+    return(figure)
+  else:
+    anvil.alert("")
 
 
 
